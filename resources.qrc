@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/asteroids">
+        <file>resource/1.png</file>
+        <file>resource/2.png</file>
+        <file>resource/3.png</file>
+        <file>resource/4.png</file>
+    </qresource>
+</RCC>
