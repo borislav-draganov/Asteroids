@@ -5,4 +5,15 @@
         <file>resource/3.png</file>
         <file>resource/4.png</file>
     </qresource>
+    <qresource prefix="/background">
+        <file>resource/backGround1.jpg</file>
+        <file>resource/backGround2.jpg</file>
+    </qresource>
+    <qresource prefix="/ship">
+        <file>resource/Ship.png</file>
+        <file>resource/saucer.png</file>
+    </qresource>
+    <qresource prefix="/FX">
+        <file>resource/explosion.gif</file>
+    </qresource>
 </RCC>

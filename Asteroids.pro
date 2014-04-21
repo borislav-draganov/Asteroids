@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,10 +13,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    asteroid.cpp
+    asteroid.cpp \
+    ship.cpp \
+    saucer.cpp \
+    missile.cpp \
+    mainwindow.cpp
 
 HEADERS  += \
-    asteroid.h
+    asteroid.h \
+    ship.h \
+    saucer.h \
+    missile.h \
+    mainwindow.h
 
 OTHER_FILES +=
 
