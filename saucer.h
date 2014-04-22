@@ -1,10 +1,9 @@
 #ifndef SAUCER_H
 #define SAUCER_H
 
-#include <ship.h>
+#include "ship.h"
+
 #include <QGraphicsItem>
-#include <QGraphicsView>
-#include <QGraphicsScene>
 #include <QLabel>
 #include <QSoundEffect>
 #include <QtWidgets>
@@ -12,6 +11,7 @@
 #include <QStyleOption>
 #include <QDebug>
 #include <QtGui>
+#include <QTimer>
 #include <math.h>
 
 class Saucer : public QObject, public QGraphicsItem
@@ -19,7 +19,7 @@ class Saucer : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Saucer(int size);
+    Saucer(int size, Ship *target, QObject *parent = 0);
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the saucer
     QPainterPath shape() const;                                                                 // Determine the shape of the saucer
@@ -31,20 +31,21 @@ protected:
     ~Saucer();
 
 private:
-     int size;                  // Size of the saucer (0 - small, 1 - big)
-     int cornerCoor;            // Top-left coordinate of the saucer - (0,0) will be the center
-     int length;                // Length of the saucer
-     QPixmap img;               // The image of the saucer
-     QLabel *gif_anim;
-     QMovie *movie;
-     QGraphicsProxyWidget *proxy;
+     int size;                      // Size of the saucer (0 - small, 1 - big)
+     int cornerCoor;                // Top-left coordinate of the saucer - (0,0) will be the center
+     int length;                    // Length of the saucer
+     qreal speed;                   // Speed of the saucer - negative value
+     Ship *target;                  // Pointer to the player ship that's going to be targeted
+     QPixmap img;                   // The image of the saucer
+     QTimer *fireTimer;             // The timer that fires missiles
 
 signals:
-     void saucerKilled();
+     void saucerKilled();           // Tell the main window a saucer's been killed by the player
+     void explosionSound();         // Tell the main window to play the explosion sound effect
 
-public slots:
-    void fireMissile();
-    void deleteExpl();
+private slots:
+     void fireMissile();            // Fire a new missile
+     void finalDelete();            // Delete the explosion animation after its done + the actual saucer
 };
 
 #endif // SAUCER_H

@@ -2,6 +2,7 @@
 #define SHIP_H
 
 #include "missile.h"
+
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -10,13 +11,14 @@
 #include <QtGui>
 #include <QtCore>
 #include <QPoint>
+#include <QTimer>
 
 class Ship : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
 public:
-    Ship();
+    Ship(QObject *parent = 0);
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

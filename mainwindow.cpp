@@ -58,7 +58,6 @@ MainWindow::MainWindow(QWidget *parent) :
     horizontalBox->addWidget( label );
     borderLayout->addWidget( topWin, 0, Qt::AlignHCenter );
 
-
     // Create scene
     scene = new QGraphicsScene( border );
     scene->setSceneRect(-300, -300, 600, 600);
@@ -78,11 +77,11 @@ MainWindow::MainWindow(QWidget *parent) :
     borderLayout->addStretch( 1 );
 
     // Add n asteroids
-    int total = 1;
+    int total = 2;
     for(int i = 0; i < total; i++) {
-        QPointer<Asteroid> aSmallAsteroid = new Asteroid(1);
-        QPointer<Asteroid> aMediumAsteroid = new Asteroid(2);
-        QPointer<Asteroid> aBigAsteroid = new Asteroid(3);
+        QPointer<Asteroid> aSmallAsteroid = new Asteroid(1, this);
+        QPointer<Asteroid> aMediumAsteroid = new Asteroid(2, this);
+        QPointer<Asteroid> aBigAsteroid = new Asteroid(3, this);
 
         aSmallAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aSmallAsteroid);
@@ -94,14 +93,14 @@ MainWindow::MainWindow(QWidget *parent) :
         scene->addItem(aBigAsteroid);
     }
 
-    QPointer<Ship> ship = new Ship();
+    QPointer<Ship> ship = new Ship(this);
     scene->addItem(ship);
 
-    QPointer<Saucer> aSmallSaucer = new Saucer(1);
+    QPointer<Saucer> aSmallSaucer = new Saucer(1, ship, this);
     aSmallSaucer->setPos(200, -200);
     scene->addItem(aSmallSaucer);
 
-    QPointer<Saucer> aBigSaucer = new Saucer(2);
+    QPointer<Saucer> aBigSaucer = new Saucer(2, ship, this);
     aBigSaucer->setPos(-200, -200);
     scene->addItem(aBigSaucer);
 
@@ -115,6 +114,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QTimer * timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
     timer->start(1000 / 33);
+
+    // Prepare the sound file - explosion
+    explosionEffect = new QSoundEffect(this);
+    explosionEffect->setSource(QUrl::fromLocalFile("explosion.wav"));
+    explosionEffect->setVolume(0.5f);
+
+    // Prepare the sound file - laser
+    laserEffect = new QSoundEffect(this);
+    laserEffect->setSource(QUrl::fromLocalFile("laser.wav"));
+    laserEffect->setVolume(0.5f);
 }
 
 int MainWindow::randInt(int low, int high) {
@@ -135,6 +144,15 @@ void MainWindow::saveGame()
 {
 }
 
+void MainWindow::playExplosionSound()
+{
+    explosionEffect->play();
+}
+
+void MainWindow::playLaserSound()
+{
+    laserEffect->play();
+}
 
 void MainWindow::createActions()
 {

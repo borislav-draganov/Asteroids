@@ -1,8 +1,6 @@
 #include "ship.h"
-#include <QTimer>
 
-Ship::Ship()
-{
+Ship::Ship(QObject *parent) : QObject(parent) {
     // Start position
     int startX = 0;
     int startY = 0;
@@ -67,6 +65,11 @@ void Ship::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     //painter->fillPath(shipShape, brush);
 }
 
+QPoint Ship::coordinates()
+{
+    return QPoint(x(), y());
+}
+
 void Ship::advance(int step)
 {
     if (!step) return;
@@ -117,7 +120,7 @@ void Ship::keyReleaseEvent(QKeyEvent *event)
 
 void Ship::fireMissile()
 {
-    Missile* newMissile = new Missile(true, this);
+    Missile* newMissile = new Missile(true, parent());
     newMissile->setPos(mapToParent(0, -29));
 
     newMissile->setRotation(rotation());

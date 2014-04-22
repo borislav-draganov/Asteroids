@@ -32,6 +32,10 @@ private slots:
      void loadGame();
      void saveGame();
 
+public slots:
+     void playExplosionSound();
+     void playLaserSound();
+
 private:
     Ui::MainWindow *ui;
     void createActions();
@@ -46,6 +50,9 @@ private:
     QVBoxLayout *borderLayout;
     QHBoxLayout *horizontalBox;
     QLabel *label;
+
+    QSoundEffect *explosionEffect;
+    QSoundEffect *laserEffect;
 };
 
 #endif // MAINWINDOW_H
