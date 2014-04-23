@@ -106,24 +106,24 @@ void Saucer::advance(int step){
         setPos(-thisX, -thisY);
     }
 
-    //Respond to collision with other items
-    if(!scene()->collidingItems(this).isEmpty()) {
-        foreach (QGraphicsItem *item, scene()->collidingItems(this)) {
-            // The saucer hit something so it'll be destroyed
-            destoyItem();
+    // Respond to collision with other items
+    QList<QGraphicsItem *> collidingItems = scene()->collidingItems(this);
+    if (!collidingItems.isEmpty()) {
+        QGraphicsItem * item = collidingItems[0];
+        // The saucer hit something so it'll be destroyed
+        destoyItem();
 
-            // Check if it was a missile
-            Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
-            if (aMissile != NULL) {
-                // If it was a missile from the ship, give points to the player
-                if (aMissile->firedFromShip()) {
-                    int maxAsteroidSize = 3;
-                    emit saucerKilled(size + maxAsteroidSize); // +3 because we'll use the same slot as the asteroids do
-                }
-
-                // In that case - destroy the missile
-                aMissile->destoyItem();
+        // Check if it was a missile
+        Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
+        if (aMissile != NULL) {
+            // If it was a missile from the ship, give points to the player
+            if (aMissile->firedFromShip()) {
+                int maxAsteroidSize = 3;
+                emit saucerKilled(size + maxAsteroidSize); // +3 because we'll use the same slot as the asteroids do
             }
+
+            // In that case - destroy the missile
+            aMissile->destoyItem();
         }
     }
 }

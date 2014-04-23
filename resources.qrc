@@ -15,5 +15,7 @@
     </qresource>
     <qresource prefix="/FX">
         <file>resource/explosion.gif</file>
+        <file>resource/explosion.wav</file>
+        <file>resource/laser.wav</file>
     </qresource>
 </RCC>

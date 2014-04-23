@@ -19,7 +19,7 @@ class Saucer : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Saucer(int size, Ship *target, QObject *parent = 0);                                        // Constructor - size: 1 - small, 2 - large
+    Saucer(int size, Ship *target, QObject *parent = 0);                                        // Constructor - size: 1 - small, 2 - large; target - player's ship
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the saucer
     QPainterPath shape() const;                                                                 // Determine the shape of the saucer

@@ -14,7 +14,7 @@ class Missile : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Missile(bool shipMissile, QObject *parent = 0);
+    Missile(bool shipMissile, QObject *parent = 0);                                             // Constructor - shipMissile : true if fired form the player's ship
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the missile
     QPainterPath shape() const;                                                                 // Determine the shape of the missile

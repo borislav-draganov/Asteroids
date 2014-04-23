@@ -94,9 +94,10 @@ void Asteroid::advance(int step){
             // Destroy the asteroid and the missile
             destoyItem();
             aMissile->destoyItem();
+            return;
         }
 
-        // Bounce the asteroid off each other
+        // Bounce the asteroids off each other
         int otherX = item->x();
         int otherY = item->y();
 

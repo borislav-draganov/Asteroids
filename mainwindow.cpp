@@ -136,12 +136,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Prepare the sound file - explosion
     explosionEffect = new QSoundEffect(this);
-    explosionEffect->setSource(QUrl::fromLocalFile("explosion.wav"));
+    explosionEffect->setSource(QUrl::fromLocalFile(":FX/resource/explosion.wav"));
     explosionEffect->setVolume(0.5f);
 
     // Prepare the sound file - laser
     laserEffect = new QSoundEffect(this);
-    laserEffect->setSource(QUrl::fromLocalFile("laser.wav"));
+    laserEffect->setSource(QUrl::fromLocalFile(":FX/resource/laser.wav"));
     laserEffect->setVolume(0.5f);
 }
 
