@@ -14,10 +14,6 @@ class QActionGroup;
 class QLabel;
 class QMenu;
 
-namespace Ui {
-class MainWindow;
-}
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,18 +24,27 @@ public:
     static int randInt(int , int );
 
 private slots:
-     void newGame();
-     void loadGame();
-     void saveGame();
+    void newGame();
+    void loadGame();
+    void saveGame();
+
 
 public slots:
-     void playExplosionSound();
-     void playLaserSound();
+    void playExplosionSound();
+    void playLaserSound();
+
+    void updateScore(int);
+    void updateLifes();
+    void updateLevel(int);
 
 private:
-    Ui::MainWindow *ui;
     void createActions();
     void createMenus();
+
+    int score;
+    int level;
+    int lifes;
+
     QMenu *GameMenu;
     QAction *newGameAct;
     QAction *loadGameAct;
@@ -49,7 +54,13 @@ private:
     QWidget *border;
     QVBoxLayout *borderLayout;
     QHBoxLayout *horizontalBox;
-    QLabel *label;
+
+    QLabel *labelScore;
+    QLabel *labelLifes;
+    QLabel *labelLevel;
+    QLabel *labelCurScore;
+    QLabel *labelCurLifes;
+    QLabel *labelCurLevel;
 
     QSoundEffect *explosionEffect;
     QSoundEffect *laserEffect;

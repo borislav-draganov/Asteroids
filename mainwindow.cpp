@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     // Set main window fixed size
-    this->setFixedSize(650,700);
+    this->setFixedSize(700,700);
 
     // Create widget to use for CentralWidget in the window
     border = new QWidget( this );
@@ -33,29 +33,43 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Create Horizontal Boz layout where we will place the labels for score, level, etc
     QWidget *topWin = new QWidget( border );
-    topWin->setFixedSize(600, 50);
+    topWin->setFixedSize(650, 50);
     horizontalBox = new QHBoxLayout ( topWin );
 
-    QLabel *label;
+    // set initial lifes, scores and level
+    score = 0;
+    lifes = 2;
+    level = 1;
+
+
     QFont smallFont( "helvetica", 14 );
-    label = new QLabel( tr("Score"), topWin );
-    label->setFont( smallFont );
-    horizontalBox->addWidget( label );
-    label = new QLabel( tr("0"), topWin );
-    label->setFont( smallFont );
-    horizontalBox->addWidget( label );
-    label = new QLabel( tr("Level"), topWin );
-    label->setFont( smallFont );
-    horizontalBox->addWidget( label );
-    label = new QLabel( tr("0"), topWin );
-    label->setFont( smallFont );
-    horizontalBox->addWidget( label );
-    label = new QLabel( tr("Lifes"), topWin );
-    label->setFont( smallFont );
-    horizontalBox->addWidget( label );
-    label = new QLabel( tr("0"), topWin );
-    label->setFont( smallFont );
-    horizontalBox->addWidget( label );
+
+    labelScore = new QLabel( tr("Score"), topWin );
+    labelScore->setFont( smallFont );
+    horizontalBox->addWidget( labelScore );
+
+    labelCurScore = new QLabel(topWin);
+    labelCurScore -> setText(QString::number(score));
+    labelCurScore ->setFont( smallFont );
+    horizontalBox->addWidget( labelCurScore );
+
+    labelLevel = new QLabel( tr("Level"), topWin );
+    labelLevel->setFont( smallFont );
+    horizontalBox->addWidget( labelLevel );
+
+    labelCurLevel = new QLabel( topWin );
+    labelCurLevel -> setText(QString::number(level));
+    labelCurLevel ->setFont( smallFont );
+    horizontalBox->addWidget( labelCurLevel );
+
+    labelLifes = new QLabel( tr("Lifes"), topWin );
+    labelLifes->setFont( smallFont );
+    horizontalBox->addWidget( labelLifes );
+
+    labelCurLifes = new QLabel( topWin );
+    labelCurLifes -> setText(QString::number(lifes));
+    labelCurLifes->setFont( smallFont );
+    horizontalBox->addWidget( labelCurLifes );
     borderLayout->addWidget( topWin, 0, Qt::AlignHCenter );
 
     // Create scene
@@ -143,6 +157,31 @@ void MainWindow::loadGame()
 void MainWindow::saveGame()
 {
 }
+
+void MainWindow::updateScore(int size)
+{
+    switch (size)
+    {
+        case 1:     score = score + 10;
+        case 2:     score = score + 20;
+        default:    score = score + 40;
+    }
+
+    labelCurScore -> setText(QString::number(score));
+}
+
+void MainWindow::updateLifes()
+{
+    lifes--;
+    labelCurLifes -> setText(QString::number(lifes));
+}
+
+void MainWindow::updateLevel(int)
+{
+    level++;
+    labelCurLevel -> setText(QString::number(level));
+}
+
 
 void MainWindow::playExplosionSound()
 {
