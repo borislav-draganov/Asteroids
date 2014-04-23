@@ -88,13 +88,7 @@ void Asteroid::advance(int step){
         {
             // If it was a missile from the ship, give points to the player
             if (aMissile->firedFromShip()) {
-                if (size == 0) {
-                    emit smallAsteroidKilled();
-                } else if (size == 1) {
-                    emit medAsteroidKilled();
-                } else {
-                    emit bigAsteroidKilled();
-                }
+                emit asteroidKilled(size);
             }
 
             // Destroy the asteroid and the missile
@@ -131,12 +125,14 @@ void Asteroid::destoyItem()
         double oneX = MainWindow::randInt(thisX - length/2, thisX + length/2);
         double oneY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childOne->setPos(oneX, oneY);
+        connect(childOne, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
 
         // Build the second child and set its coordinates somewhere within the parent asteroid
         Asteroid *childTwo = new Asteroid(childSize, asteroidParent);
         double twoX = MainWindow::randInt(thisX - length/2, thisX + length/2);
         double twoY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childTwo->setPos(twoX, twoY);
+        connect(childTwo, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
 
         // Add both child asteroids to the scene
         scene()->addItem(childOne);

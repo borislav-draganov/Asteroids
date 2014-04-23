@@ -19,7 +19,7 @@ class Saucer : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Saucer(int size, Ship *target, QObject *parent = 0);
+    Saucer(int size, Ship *target, QObject *parent = 0);                                        // Constructor - size: 1 - small, 2 - large
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the saucer
     QPainterPath shape() const;                                                                 // Determine the shape of the saucer
@@ -40,7 +40,7 @@ private:
      QTimer *fireTimer;             // The timer that fires missiles
 
 signals:
-     void saucerKilled();           // Tell the main window a saucer's been killed by the player
+     void saucerKilled(int size);   // Tell the main window a saucer's been killed by the player
      void explosionSound();         // Tell the main window to play the explosion sound effect
 
 private slots:

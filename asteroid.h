@@ -18,7 +18,7 @@ class Asteroid : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Asteroid(int size, QObject *parent = 0);
+    Asteroid(int size, QObject *parent = 0);                                                    // Constructor - size: 1 - small, 2 - medium, 3 - large
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the asteroid
     QPainterPath shape() const;                                                                 // Determine the shape of the asteroid
@@ -41,9 +41,7 @@ private:
      QPixmap img;                   // The image of the asteroid
 
 signals:
-     void smallAsteroidKilled();    // Tell the main window a small asteroid's been killed by the player
-     void medAsteroidKilled();      // Tell the main window a medium asteroid's been killed by the player
-     void bigAsteroidKilled();      // Tell the main window a big asteroid's been killed by the player
+     void asteroidKilled(int size); // Tell the main window an asteroid's been killed by the player
      void explosionSound();         // Tell the main window to play the explosion sound effect
 
 private slots:

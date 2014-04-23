@@ -117,7 +117,8 @@ void Saucer::advance(int step){
             if (aMissile != NULL) {
                 // If it was a missile from the ship, give points to the player
                 if (aMissile->firedFromShip()) {
-                    emit saucerKilled();
+                    int maxAsteroidSize = 3;
+                    emit saucerKilled(size + maxAsteroidSize); // +3 because we'll use the same slot as the asteroids do
                 }
 
                 // In that case - destroy the missile

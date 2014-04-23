@@ -99,12 +99,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
         aSmallAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aSmallAsteroid);
+        connect(aSmallAsteroid, SIGNAL(asteroidKilled(int)), this, SLOT(updateScore(int)));
 
         aMediumAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aMediumAsteroid);
+        connect(aMediumAsteroid, SIGNAL(asteroidKilled(int)), this, SLOT(updateScore(int)));
 
         aBigAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aBigAsteroid);
+        connect(aBigAsteroid, SIGNAL(asteroidKilled(int)), this, SLOT(updateScore(int)));
     }
 
     QPointer<Ship> ship = new Ship(this);
@@ -113,10 +116,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QPointer<Saucer> aSmallSaucer = new Saucer(1, ship, this);
     aSmallSaucer->setPos(200, -200);
     scene->addItem(aSmallSaucer);
+    connect(aSmallSaucer, SIGNAL(saucerKilled(int)), this, SLOT(updateScore(int)));
 
     QPointer<Saucer> aBigSaucer = new Saucer(2, ship, this);
     aBigSaucer->setPos(-200, -200);
     scene->addItem(aBigSaucer);
+    connect(aBigSaucer, SIGNAL(saucerKilled(int)), this, SLOT(updateScore(int)));
 
     // Create the menus
     createActions();
@@ -160,12 +165,12 @@ void MainWindow::saveGame()
 
 void MainWindow::updateScore(int size)
 {
-    switch (size)
-    {
-        case 1:     score = score + 10;
-        case 2:     score = score + 20;
-        default:    score = score + 40;
-    }
+    if      (size == 1) { score += 100; }
+    else if (size == 2) { score += 50; }
+    else if (size == 3) { score += 20; }
+    else if (size == 4) { score += 1000; }
+    else if (size == 5) { score += 500; }
+    else { }
 
     labelCurScore -> setText(QString::number(score));
 }
