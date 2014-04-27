@@ -38,6 +38,7 @@ private:
      Ship *target;                  // Pointer to the player ship that's going to be targeted
      QPixmap img;                   // The image of the saucer
      QTimer *fireTimer;             // The timer that fires missiles
+     QPointer<QLabel> gif_anim ;    // The explosion effect .gif
 
 signals:
      void saucerKilled(int size);   // Tell the main window a saucer's been killed by the player
@@ -45,7 +46,6 @@ signals:
 
 private slots:
      void fireMissile();            // Fire a new missile
-     void finalDelete();            // Delete the explosion animation after its done + the actual saucer
 };
 
 #endif // SAUCER_H

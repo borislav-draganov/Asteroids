@@ -49,14 +49,14 @@ void Missile::advance(int step){
 
     // If the missile leaves the scene, delete it
     if (!scene()->sceneRect().contains(x(), y())) {
-        delete this;
+        deleteLater();
     }
 }
 
-// Destroy the missile
+// Delete the missile
 void Missile::destoyItem()
 {
-    delete this;
+    deleteLater();
 }
 
 // Return true if the missile was fired from the player ship

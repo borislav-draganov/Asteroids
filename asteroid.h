@@ -39,13 +39,11 @@ private:
      double lengthShapeOffset;      // Offset of the length - turns the shape from a circle into a ellipse
      qreal randRotation;            // A random rotation while moving
      QPixmap img;                   // The image of the asteroid
+     QPointer<QLabel> gif_anim ;    // The explosion effect .gif
 
 signals:
      void asteroidKilled(int size); // Tell the main window an asteroid's been killed by the player
      void explosionSound();         // Tell the main window to play the explosion sound effect
-
-private slots:
-     void finalDelete();            // Delete the explosion animation after its done + the actual asteroid
 };
 
 #endif // ASTEROID_H

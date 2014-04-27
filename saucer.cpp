@@ -43,6 +43,8 @@ Saucer::Saucer(int size, Ship *target, QObject *parent) : QObject(parent)
 
     // Connect to the slot that plays the sound
     connect(this, SIGNAL(explosionSound()), parent, SLOT(playExplosionSound()));
+
+    gif_anim = 0;
 }
 
 // Determine the maximum area available for displaying content
@@ -147,14 +149,16 @@ void Saucer::destoyItem()
     movie->setSpeed(250);
     movie->start();
 
-    QLabel *gif_anim = new QLabel();
+    gif_anim = new QLabel();
     gif_anim->setMovie(movie);
     gif_anim->setAttribute( Qt::WA_TranslucentBackground, true );
 
     QGraphicsProxyWidget *proxy = scene()->addWidget(gif_anim);
     proxy->setParent(this);
     proxy->setPos(thisX - gif_anim->width()/2, thisY - gif_anim->height()/2);
-    connect(movie, SIGNAL(finished()), this, SLOT(finalDelete()));
+
+    // Schedule the object for deleting after the explosion gif finishes
+    connect(movie, SIGNAL(finished()), this, SLOT(deleteLater()));
 
     // Remove the saucer from the field
     scene()->removeItem(this);
@@ -186,12 +190,7 @@ void Saucer::fireMissile()
     setRotation(oldRotation);
 }
 
-// Delete the actual saucer
-void Saucer::finalDelete()
-{
-    delete this;
-}
-
 Saucer::~Saucer()
 {
+    if(gif_anim) delete gif_anim;
 }

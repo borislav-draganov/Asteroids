@@ -82,40 +82,27 @@ void Ship::advance(int step)
         setPos(-thisX, -thisY);
     }
 
-    if (keyLeft && keyUP)
-    {
-        setRotation(rotation() - angle);
-        setPos(mapToParent(0, speed));
-    }
-    else if (keyRight && keyUP)
-    {
-        setRotation(rotation() + angle);
-        setPos(mapToParent(0, speed));
-    }
-    else if (keyUP) setPos(mapToParent(0, speed));
-    else if (keyLeft) setRotation(rotation() - angle);
-    else if (keyRight) setRotation(rotation() + angle);
+    if (keyUP) setPos(mapToParent(0, speed));
+    if (keyLeft) setRotation(rotation() - angle);
+    if (keyRight) setRotation(rotation() + angle);
 
-    if (!scene()->collidingItems(this).isEmpty()) {
-        //qDebug() << "Got hit!";
-    }
 }
 
 void Ship::keyPressEvent(QKeyEvent *event)
 {
     if (event->isAutoRepeat()) { return; }
-    if (event->key() == Qt::Key_Up) keyUP = true;
-    if (event->key() == Qt::Key_Left) keyLeft = true;
-    if (event->key() == Qt::Key_Right) keyRight = true;
-    if (event->key() == Qt::Key_Space) fireMissile();
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) { keyUP = true; }
+    if (event->key() == Qt::Key_Left || event->key() == Qt::Key_A) { keyLeft = true; }
+    if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) { keyRight = true; }
+    if (event->key() == Qt::Key_Space) { fireMissile(); }
 }
 
 void Ship::keyReleaseEvent(QKeyEvent *event)
 {
     if(event->isAutoRepeat()) { return; }
-    if (event->key() == Qt::Key_Up) keyUP = false;
-    if (event->key() == Qt::Key_Left) keyLeft = false;
-    if (event->key() == Qt::Key_Right) keyRight = false;
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) keyUP = false;
+    if (event->key() == Qt::Key_Left || event->key() == Qt::Key_A) keyLeft = false;
+    if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) keyRight = false;
 }
 
 void Ship::fireMissile()
