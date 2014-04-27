@@ -27,7 +27,7 @@ private slots:
     void newGame();
     void loadGame();
     void saveGame();
-
+    void newLevel();
 
 public slots:
     void playExplosionSound();

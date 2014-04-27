@@ -14,6 +14,30 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
+
+#define maxLevels   10
+
+struct levelDef
+{
+    int levelNum;
+    int asteroidsNum;
+    int saucerNum;
+};
+
+levelDef levelDescr[maxLevels] = {
+    { 1,  3, 2},
+    { 2,  4, 2},
+    { 3,  5, 2},
+    { 4,  6, 3},
+    { 5,  7, 3},
+    { 6,  8, 3},
+    { 7,  9, 3},
+    { 8, 10, 4},
+    { 9, 11, 4},
+    {10, 12, 4}
+};
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -90,6 +114,38 @@ MainWindow::MainWindow(QWidget *parent) :
     borderLayout->addWidget( view, 0, Qt::AlignHCenter );
     borderLayout->addStretch( 1 );
 
+    //Test
+    newGame();
+
+    // Create the menus
+    createActions();
+    createMenus();
+
+    // Set window title
+    setWindowTitle(tr("Asteroids"));
+
+    QTimer * timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
+    timer->start(1000 / 33);
+
+    // Prepare the sound file - explosion
+    explosionEffect = new QSoundEffect(this);
+    explosionEffect->setSource(QUrl::fromLocalFile(":FX/resource/explosion.wav"));
+    explosionEffect->setVolume(0.5f);
+
+    // Prepare the sound file - laser
+    laserEffect = new QSoundEffect(this);
+    laserEffect->setSource(QUrl::fromLocalFile(":FX/resource/laser.wav"));
+    laserEffect->setVolume(0.5f);
+}
+
+int MainWindow::randInt(int low, int high) {
+    // Random number between low and high
+    return qrand() % ((high + 1) - low) + low;
+}
+
+void MainWindow::newLevel()
+{
     // Add n asteroids
     int total = 2;
     for(int i = 0; i < total; i++) {
@@ -123,36 +179,18 @@ MainWindow::MainWindow(QWidget *parent) :
     scene->addItem(aBigSaucer);
     connect(aBigSaucer, SIGNAL(saucerKilled(int)), this, SLOT(updateScore(int)));
 
-    // Create the menus
-    createActions();
-    createMenus();
-
-    // Set window title
-    setWindowTitle(tr("Asteroids"));
-
-    QTimer * timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), scene, SLOT(advance()));
-    timer->start(1000 / 33);
-
-    // Prepare the sound file - explosion
-    explosionEffect = new QSoundEffect(this);
-    explosionEffect->setSource(QUrl::fromLocalFile(":FX/resource/explosion.wav"));
-    explosionEffect->setVolume(0.5f);
-
-    // Prepare the sound file - laser
-    laserEffect = new QSoundEffect(this);
-    laserEffect->setSource(QUrl::fromLocalFile(":FX/resource/laser.wav"));
-    laserEffect->setVolume(0.5f);
 }
-
-int MainWindow::randInt(int low, int high) {
-    // Random number between low and high
-    return qrand() % ((high + 1) - low) + low;
-}
-
 
 void MainWindow::newGame()
 {
+    lifes = 2;
+    labelCurLifes -> setText(QString::number(lifes));
+    level = 1;
+    labelCurLevel -> setText(QString::number(level));
+    score = 0;
+    labelCurScore -> setText(QString::number(score));
+    scene->clear();
+    newLevel();
 }
 
 void MainWindow::loadGame()
