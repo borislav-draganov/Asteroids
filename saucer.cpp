@@ -142,6 +142,7 @@ void Saucer::destoyItem()
 
     // Add an explosion effect
     emit explosionSound();
+    emit updateObjectCountOnKill(-1); // -1 as we will remove the saucer
 
     QMovie *movie = new QMovie(this);
     movie->setFileName(":/FX/resource/explosion.gif");

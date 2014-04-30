@@ -114,6 +114,7 @@ void Asteroid::advance(int step){
 // Destroy the asteroid and brake it down to smaller one if possible
 void Asteroid::destoyItem()
 {
+    emit updateObjectCountOnKill(-1); // -1 as we will remove the asteroid
     // Use the current coordinates
     double thisX = x();
     double thisY = y();
@@ -122,13 +123,14 @@ void Asteroid::destoyItem()
     if(size > 1) {
         QObject *asteroidParent = parent();
         int childSize = --size;
-
+        emit updateObjectCountOnKill(2); // +2 as we will spawn 2 new asteroids
         // Build the first child and set its coordinates somewhere within the parent asteroid
         Asteroid *childOne = new Asteroid(childSize, asteroidParent);
         double oneX = MainWindow::randInt(thisX - length/2, thisX + length/2);
         double oneY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childOne->setPos(oneX, oneY);
         connect(childOne, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
+        connect(childOne, SIGNAL(updateObjectCountOnKill(int)),asteroidParent,SLOT(updateObjectCounter(int)));
 
         // Build the second child and set its coordinates somewhere within the parent asteroid
         Asteroid *childTwo = new Asteroid(childSize, asteroidParent);
@@ -136,10 +138,12 @@ void Asteroid::destoyItem()
         double twoY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childTwo->setPos(twoX, twoY);
         connect(childTwo, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
+        connect(childTwo, SIGNAL(updateObjectCountOnKill(int)),asteroidParent,SLOT(updateObjectCounter(int)));
 
         // Add both child asteroids to the scene
         scene()->addItem(childOne);
         scene()->addItem(childTwo);
+
     }
 
     // Add an explosion effect

@@ -27,7 +27,7 @@ private slots:
     void newGame();
     void loadGame();
     void saveGame();
-    void newLevel();
+
 
 public slots:
     void playExplosionSound();
@@ -35,15 +35,21 @@ public slots:
 
     void updateScore(int);
     void updateLifes();
-    void updateLevel(int);
+    void updateLevel();
+
+    void updateObjectCounter(int);
+    int checkObjectCounter();
 
 private:
     void createActions();
     void createMenus();
+    void setObjectCounter(int);
+    void newLevel();
 
     int score;
     int level;
     int lifes;
+    int objectCounter;
 
     QMenu *GameMenu;
     QAction *newGameAct;
