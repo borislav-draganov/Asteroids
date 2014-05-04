@@ -138,12 +138,11 @@ void Asteroid::destoyItem()
         double twoY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childTwo->setPos(twoX, twoY);
         connect(childTwo, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
-        connect(childTwo, SIGNAL(updateObjectCountOnKill(int)),asteroidParent,SLOT(updateObjectCounter(int)));
+        connect(childTwo, SIGNAL(updateObjectCountOnKill(int)), asteroidParent, SLOT(updateObjectCounter(int)));
 
         // Add both child asteroids to the scene
         scene()->addItem(childOne);
         scene()->addItem(childTwo);
-
     }
 
     // Add an explosion effect

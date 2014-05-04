@@ -181,7 +181,7 @@ void Saucer::fireMissile()
     qreal oldRotation = rotation();
     setRotation(angleInDegrees);
 
-    Missile *newMissile = new Missile(false, parent());
+    Missile *newMissile = new Missile(false, true, parent());
     int frontOffset = - ( length / 2 + newMissile->getLength() );
     newMissile->setPos(mapToParent(0, frontOffset));
     newMissile->setRotation(angleInDegrees);

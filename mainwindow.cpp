@@ -149,9 +149,11 @@ void MainWindow::newLevel()
 {
     setObjectCounter(0); // setting the objectCounter to 0 before creating the level
 
-    // Add the ship
+    // Add the ship and set permanent focus on it
     QPointer<Ship> ship = new Ship(this);
     scene->addItem(ship);
+    scene->setStickyFocus(ship);
+    connect(ship, SIGNAL(shipDestroyed()), this, SLOT(updateLifes()));
 
     /*
     // Add n asteroids
@@ -198,8 +200,6 @@ void MainWindow::newLevel()
         connect(aBigSaucer, SIGNAL(saucerKilled(int)), this, SLOT(updateScore(int)));
         connect(aBigSaucer, SIGNAL(updateObjectCountOnKill(int)),this,SLOT(updateObjectCounter(int)));
     }
-
-
 }
 
 void MainWindow::newGame()

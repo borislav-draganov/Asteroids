@@ -28,7 +28,6 @@ private slots:
     void loadGame();
     void saveGame();
 
-
 public slots:
     void playExplosionSound();
     void playLaserSound();

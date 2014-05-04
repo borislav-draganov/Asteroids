@@ -4,8 +4,9 @@
  * @param shipMissile : true if fired form the player ship
  * @param parent : the parent in the Qt hierarchy
  */
-Missile::Missile(bool shipMissile, QObject *parent) : QObject(parent) {
+Missile::Missile(bool shipMissile, bool saucerMissile, QObject *parent) : QObject(parent) {
     this->shipMissile = shipMissile;
+    this->saucerMissile = saucerMissile;
 
     cornerCoor = -5;
     length = 10;
@@ -63,6 +64,11 @@ void Missile::destoyItem()
 bool Missile::firedFromShip()
 {
     return shipMissile;
+}
+
+bool Missile::firedFromSaucer()
+{
+    return saucerMissile;
 }
 
 int Missile::getLength()
