@@ -1,5 +1,4 @@
 #include "saucer.h"
-#include "missile.h"
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
@@ -44,6 +43,13 @@ Saucer::Saucer(int size, Ship *target, QObject *parent) : QObject(parent)
     // Connect to the slot that plays the sound
     connect(this, SIGNAL(explosionSound()), parent, SLOT(playExplosionSound()));
 
+    // Connect to the slot that updates the score
+    connect(this, SIGNAL(saucerKilled(int)), parent, SLOT(updateScore(int)));
+
+    // Connect to the slot that updates the object counter
+    connect(this, SIGNAL(updateObjectCountOnKill(int)), parent, SLOT(updateObjectCounter(int)));
+
+    // Nullify the pointer for the explosion .gif
     gif_anim = 0;
 }
 
@@ -120,8 +126,9 @@ void Saucer::advance(int step){
         if (aMissile != NULL) {
             // If it was a missile from the ship, give points to the player
             if (aMissile->firedFromShip()) {
+                // Send a signal to update the score: +3 because we'll use the same slot as the asteroids do
                 int maxAsteroidSize = 3;
-                emit saucerKilled(size + maxAsteroidSize); // +3 because we'll use the same slot as the asteroids do
+                emit saucerKilled(size + maxAsteroidSize);
             }
 
             // In that case - destroy the missile
@@ -133,6 +140,9 @@ void Saucer::advance(int step){
 // Destroy the saucer
 void Saucer::destoyItem()
 {
+    // Update the object counter: -1 as we will remove the saucer
+    emit updateObjectCountOnKill(-1);
+
     // Stop firing
     fireTimer->stop();
 
@@ -142,7 +152,6 @@ void Saucer::destoyItem()
 
     // Add an explosion effect
     emit explosionSound();
-    emit updateObjectCountOnKill(-1); // -1 as we will remove the saucer
 
     QMovie *movie = new QMovie(this);
     movie->setFileName(":/FX/resource/explosion.gif");
@@ -168,8 +177,11 @@ void Saucer::destoyItem()
 // Fire a missile towards the player ship
 void Saucer::fireMissile()
 {
+    // Don't shoot if the target is not on the scene
+    if(!target->scene()) { return; }
+
     // Get the target's coordinates
-    QPoint targetCoor = target->coordinates();
+    QPointF targetCoor = target->coordinates();
 
     // Calculate the angle
     double deltaY = targetCoor.y() - y();
@@ -177,11 +189,11 @@ void Saucer::fireMissile()
 
     double angleInDegrees = ::atan2(deltaY, deltaX) * 180 / Pi + 90;
 
-    // Temporarily rotate the coordinate system and crate the missile object
+    // Temporarily rotate the coordinate system and create the missile object
     qreal oldRotation = rotation();
     setRotation(angleInDegrees);
 
-    Missile *newMissile = new Missile(false, true, parent());
+    Missile *newMissile = new Missile(false, parent());
     int frontOffset = - ( length / 2 + newMissile->getLength() );
     newMissile->setPos(mapToParent(0, frontOffset));
     newMissile->setRotation(angleInDegrees);

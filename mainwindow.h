@@ -69,6 +69,8 @@ private:
 
     QSoundEffect *explosionEffect;
     QSoundEffect *laserEffect;
+
+    Ship *theShip;
 };
 
 #endif // MAINWINDOW_H

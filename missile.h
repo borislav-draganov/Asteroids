@@ -14,14 +14,13 @@ class Missile : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Missile(bool shipMissile, bool saucerMissile, QObject *parent = 0);                         // Constructor - shipMissile : true if fired form the player's ship, saucerMissile : true if fired from a saucer
+    Missile(bool shipMissile, QObject *parent = 0);                         // Constructor - shipMissile : true if fired form the player's ship, saucerMissile : true if fired from a saucer
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the missile
     QPainterPath shape() const;                                                                 // Determine the shape of the missile
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);     // Paint the object
     void destoyItem();                                                                          // Destroy the missile
     bool firedFromShip();                                                                       // Return true if fired from ship
-    bool firedFromSaucer();                                                                     // Return true if fired from saucer
     int getLength();                                                                            // Get the length of the missile
 
     // Enable qgraphicsitem_cast
@@ -41,7 +40,6 @@ private:
      double cornerCoor;            // Top-left coordinate of the missile - (0,0) will be the center
      double length;                // Length of the missile
      bool shipMissile;             // Is this missile fired from the ship
-     bool saucerMissile;           // Is this missile fired from the saucer
      QSoundEffect *soundEffect;    // The laser sound effect
 
 signals:

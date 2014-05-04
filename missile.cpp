@@ -4,13 +4,14 @@
  * @param shipMissile : true if fired form the player ship
  * @param parent : the parent in the Qt hierarchy
  */
-Missile::Missile(bool shipMissile, bool saucerMissile, QObject *parent) : QObject(parent) {
+Missile::Missile(bool shipMissile, QObject *parent) : QObject(parent) {
     this->shipMissile = shipMissile;
-    this->saucerMissile = saucerMissile;
 
+    // Set the size parameters
     cornerCoor = -5;
     length = 10;
 
+    // Set the movement speed
     speed = -10;
 
     // Play the laser sound effect
@@ -60,17 +61,17 @@ void Missile::destoyItem()
     deleteLater();
 }
 
-// Return true if the missile was fired from the player ship
+/* Return true if the missile was fired from the player ship
+ * @return : true - fired from ship; false - fired from saucer
+ */
 bool Missile::firedFromShip()
 {
     return shipMissile;
 }
 
-bool Missile::firedFromSaucer()
-{
-    return saucerMissile;
-}
-
+/* Get the length of the missile
+ * @return : height of the missile
+ */
 int Missile::getLength()
 {
     return length;

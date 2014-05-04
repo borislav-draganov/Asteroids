@@ -138,6 +138,8 @@ MainWindow::MainWindow(QWidget *parent) :
     laserEffect = new QSoundEffect(this);
     laserEffect->setSource(QUrl::fromLocalFile(":FX/resource/laser.wav"));
     laserEffect->setVolume(0.5f);
+
+
 }
 
 int MainWindow::randInt(int low, int high) {
@@ -150,10 +152,10 @@ void MainWindow::newLevel()
     setObjectCounter(0); // setting the objectCounter to 0 before creating the level
 
     // Add the ship and set permanent focus on it
-    QPointer<Ship> ship = new Ship(this);
-    scene->addItem(ship);
-    scene->setStickyFocus(ship);
-    connect(ship, SIGNAL(shipDestroyed()), this, SLOT(updateLifes()));
+    theShip = new Ship(this);
+    scene->setStickyFocus(theShip);
+    connect(theShip, SIGNAL(shipDestroyed()), this, SLOT(updateLifes()));
+    scene->addItem(theShip);
 
     /*
     // Add n asteroids
@@ -169,18 +171,12 @@ void MainWindow::newLevel()
 
         aSmallAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aSmallAsteroid);
-        connect(aSmallAsteroid, SIGNAL(asteroidKilled(int)), this, SLOT(updateScore(int)));
-        connect(aSmallAsteroid, SIGNAL(updateObjectCountOnKill(int)),this,SLOT(updateObjectCounter(int)));
 
         aMediumAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aMediumAsteroid);
-        connect(aMediumAsteroid, SIGNAL(asteroidKilled(int)), this, SLOT(updateScore(int)));
-        connect(aMediumAsteroid, SIGNAL(updateObjectCountOnKill(int)),this,SLOT(updateObjectCounter(int)));
 
         aBigAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aBigAsteroid);
-        connect(aBigAsteroid, SIGNAL(asteroidKilled(int)), this, SLOT(updateScore(int)));
-        connect(aBigAsteroid, SIGNAL(updateObjectCountOnKill(int)),this,SLOT(updateObjectCounter(int)));
     }
 
 
@@ -188,17 +184,13 @@ void MainWindow::newLevel()
     int saucerTotal = levelDescr[level - 1].saucerNum;
     for(int i = 0; i < saucerTotal; i++) {
         updateObjectCounter(2); // Adding 2 objects as we spawn 2 saucers one of each size
-        QPointer<Saucer> aSmallSaucer = new Saucer(1, ship, this);
+        QPointer<Saucer> aSmallSaucer = new Saucer(1, theShip, this);
         aSmallSaucer->setPos(200, -200);
         scene->addItem(aSmallSaucer);
-        connect(aSmallSaucer, SIGNAL(saucerKilled(int)), this, SLOT(updateScore(int)));
-        connect(aSmallSaucer, SIGNAL(updateObjectCountOnKill(int)),this,SLOT(updateObjectCounter(int)));
 
-        QPointer<Saucer> aBigSaucer = new Saucer(2, ship, this);
+        QPointer<Saucer> aBigSaucer = new Saucer(2, theShip, this);
         aBigSaucer->setPos(-200, -200);
         scene->addItem(aBigSaucer);
-        connect(aBigSaucer, SIGNAL(saucerKilled(int)), this, SLOT(updateScore(int)));
-        connect(aBigSaucer, SIGNAL(updateObjectCountOnKill(int)),this,SLOT(updateObjectCounter(int)));
     }
 }
 
@@ -231,7 +223,8 @@ void MainWindow::updateScore(int size)
     else if (size == 3) { score += 20;  }
     else if (size == 4) { score += 1000;}
     else if (size == 5) { score += 500; }
-    else { }
+
+    labelCurScore -> setText(QString::number(score));
 }
 
 void MainWindow::setObjectCounter(int upd){

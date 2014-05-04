@@ -2,6 +2,8 @@
 #define SAUCER_H
 
 #include "ship.h"
+#include "missile.h"
+#include "mainwindow.h"
 
 #include <QGraphicsItem>
 #include <QLabel>

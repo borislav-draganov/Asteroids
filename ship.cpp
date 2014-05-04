@@ -74,9 +74,9 @@ void Ship::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     //painter->fillPath(shipShape, brush);
 }
 
-QPoint Ship::coordinates()
+QPointF Ship::coordinates()
 {
-    return QPoint(x(), y());
+    return QPointF(x(), y());
 }
 
 void Ship::advance(int step) {
@@ -105,7 +105,7 @@ void Ship::advance(int step) {
         Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
         if (aMissile != NULL) {
             // If a missile from the saucer hit the ship, destroy the ship
-            if (aMissile->firedFromSaucer()) {
+            if (!aMissile->firedFromShip()) {
                 emit shipDestroyed();
             }
 
@@ -161,7 +161,7 @@ void Ship::keyReleaseEvent(QKeyEvent *event) {
 }
 
 void Ship::fireMissile() {
-    Missile *newMissile = new Missile(true, false, parent());
+    Missile *newMissile = new Missile(true, parent());
     int frontOffset = -(height / 2 + newMissile->getLength());
 
     newMissile->setPos(mapToParent(0, 1.05 * frontOffset));

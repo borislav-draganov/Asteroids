@@ -7,7 +7,6 @@
  * @param parent : the parent in the Qt hierarchy
  */
 Asteroid::Asteroid(int size, QObject *parent) : QObject(parent) {
-    //qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     // Set the size of the asteroid
     this->size = size;
 
@@ -39,6 +38,13 @@ Asteroid::Asteroid(int size, QObject *parent) : QObject(parent) {
     // Connect to the slot that plays the sound
     connect(this, SIGNAL(explosionSound()), parent, SLOT(playExplosionSound()));
 
+    // Connect to the slot that updates the score
+    connect(this, SIGNAL(asteroidKilled(int)), parent, SLOT(updateScore(int)));
+
+    // Connect to the slot that updates the object counter
+    connect(this, SIGNAL(updateObjectCountOnKill(int)), parent, SLOT(updateObjectCounter(int)));
+
+    // Nullify the pointer for the explosion .gif
     gif_anim = 0;
 }
 
@@ -79,6 +85,13 @@ void Asteroid::advance(int step){
 
     // If the asteroid leaves the scene, move it back
     if (!scene()->sceneRect().contains(thisX, thisY)) {
+        // Test - fix the issue of blinking/stuck asteroids
+        if(thisX > 0) { thisX -= 10; }
+        else { thisX += 10; }
+
+        if(thisY > 0) { thisY -= 10; }
+        else { thisY += 10; }
+
         setPos(-thisX, -thisY);
     }
 
@@ -114,7 +127,9 @@ void Asteroid::advance(int step){
 // Destroy the asteroid and brake it down to smaller one if possible
 void Asteroid::destoyItem()
 {
-    emit updateObjectCountOnKill(-1); // -1 as we will remove the asteroid
+    // Update the object counter: -1 as we will remove the asteroid
+    emit updateObjectCountOnKill(-1);
+
     // Use the current coordinates
     double thisX = x();
     double thisY = y();
@@ -123,7 +138,10 @@ void Asteroid::destoyItem()
     if(size > 1) {
         QObject *asteroidParent = parent();
         int childSize = --size;
-        emit updateObjectCountOnKill(2); // +2 as we will spawn 2 new asteroids
+
+        // Update the object counter: +2 as we will spawn 2 new asteroids
+        emit updateObjectCountOnKill(2);
+
         // Build the first child and set its coordinates somewhere within the parent asteroid
         Asteroid *childOne = new Asteroid(childSize, asteroidParent);
         double oneX = MainWindow::randInt(thisX - length/2, thisX + length/2);
