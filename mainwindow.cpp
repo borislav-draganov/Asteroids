@@ -13,7 +13,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QPushButton>
-
+#include <QSplashScreen>
 
 #define maxLevels   10
 
@@ -60,13 +60,13 @@ MainWindow::MainWindow(QWidget *parent) :
     topWin->setFixedSize(600, 50);
     horizontalBox = new QHBoxLayout ( topWin );
 
-    // set initial lifes, scores and level
+    // set initial lives, scores and level
     score = 0;
-    lifes = 0;
+    lives = 2;
     level = 1;
 
 
-    // Add labels for score, lifes and level
+    // Add labels for score, lives and level
     // Set font
     QFont smallFont( "helvetica", 14 );
 
@@ -88,14 +88,14 @@ MainWindow::MainWindow(QWidget *parent) :
     labelCurLevel ->setFont( smallFont );
     horizontalBox->addWidget( labelCurLevel );
 
-    labelLifes = new QLabel( tr("Lifes"), topWin );
-    labelLifes->setFont( smallFont );
-    horizontalBox->addWidget( labelLifes );
+    labelLives = new QLabel( tr("Lives"), topWin );
+    labelLives->setFont( smallFont );
+    horizontalBox->addWidget( labelLives );
 
-    labelCurLifes = new QLabel( topWin );
-    labelCurLifes -> setText(QString::number(lifes));
-    labelCurLifes->setFont( smallFont );
-    horizontalBox->addWidget( labelCurLifes );
+    labelCurLives = new QLabel( topWin );
+    labelCurLives -> setText(QString::number(lives));
+    labelCurLives->setFont( smallFont );
+    horizontalBox->addWidget( labelCurLives );
     borderLayout->addWidget( topWin);
 
     // Create scene
@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create QGraphicsView that will be nested as CentralWidget in the MainWindow
 
     view = new QGraphicsView(scene);
-
+    scene->setStickyFocus(true);
     borderLayout->addWidget( view);
     borderLayout->addStretch( 1 );
 
@@ -147,15 +147,23 @@ int MainWindow::randInt(int low, int high) {
     return qrand() % ((high + 1) - low) + low;
 }
 
+
+void MainWindow::addShip()
+{
+    // Add the ship and set permanent focus on it
+    theShip = new Ship(this);
+    scene->addItem(theShip);
+    theShip->setFocus();
+    connect(theShip, SIGNAL(shipDestroyed()), this, SLOT(updateLives()));
+}
+
 void MainWindow::newLevel()
 {
     setObjectCounter(0); // setting the objectCounter to 0 before creating the level
 
-    // Add the ship and set permanent focus on it
-    theShip = new Ship(this);
-    scene->setStickyFocus(theShip);
-    connect(theShip, SIGNAL(shipDestroyed()), this, SLOT(updateLifes()));
-    scene->addItem(theShip);
+    // Add the ship
+    addShip();
+
 
     /*
     // Add n asteroids
@@ -196,8 +204,8 @@ void MainWindow::newLevel()
 
 void MainWindow::newGame()
 {
-    lifes = 2;
-    labelCurLifes -> setText(QString::number(lifes));
+    lives = 2;
+    labelCurLives -> setText(QString::number(lives));
     level = 1;
     labelCurLevel -> setText(QString::number(level));
     score = 0;
@@ -235,13 +243,10 @@ void MainWindow::updateObjectCounter(int upd)
 {
     objectCounter+=upd;
 
-
-
     if(objectCounter==0){
         updateLevel();
         newLevel();
     }
-    labelCurLifes -> setText(QString::number(objectCounter));
 }
 
 int MainWindow::checkObjectCounter()
@@ -249,18 +254,38 @@ int MainWindow::checkObjectCounter()
     return objectCounter;
 }
 
-void MainWindow::updateLifes()
+void MainWindow::updateLives()
 {
-    lifes--;
-    labelCurLifes -> setText(QString::number(lifes));
+    // Lower the number of lives
+    lives--;
+    labelCurLives -> setText(QString::number(lives));
+
+
+    // Check if any lives are left - if yes, add new ship
+    if(lives>0)
+    {
+        addShip();
+    }
+    // If no more lives left display "Game Over"
+    else displayGameOver();
+
 }
 
 void MainWindow::updateLevel()
 {
+
     level++;
     labelCurLevel -> setText(QString::number(level));
 }
 
+
+void MainWindow::displayGameOver()
+{
+    QPixmap pixmap(":/GameOver/resource/GameOver.jpg");
+    QSplashScreen *splash = new QSplashScreen(pixmap);
+    splash->show();
+    qApp->processEvents();
+}
 
 void MainWindow::playExplosionSound()
 {

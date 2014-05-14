@@ -33,7 +33,7 @@ public slots:
     void playLaserSound();
 
     void updateScore(int);
-    void updateLifes();
+    void updateLives();
     void updateLevel();
 
     void updateObjectCounter(int);
@@ -44,10 +44,12 @@ private:
     void createMenus();
     void setObjectCounter(int);
     void newLevel();
+    void addShip();
+    void displayGameOver();
 
     int score;
     int level;
-    int lifes;
+    int lives;
     int objectCounter;
 
     QMenu *GameMenu;
@@ -61,10 +63,10 @@ private:
     QHBoxLayout *horizontalBox;
 
     QLabel *labelScore;
-    QLabel *labelLifes;
+    QLabel *labelLives;
     QLabel *labelLevel;
     QLabel *labelCurScore;
-    QLabel *labelCurLifes;
+    QLabel *labelCurLives;
     QLabel *labelCurLevel;
 
     QSoundEffect *explosionEffect;

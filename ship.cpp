@@ -99,14 +99,16 @@ void Ship::advance(int step) {
     QList<QGraphicsItem *> collidingItems = scene()->collidingItems(this);
     if (!collidingItems.isEmpty()) {
         QGraphicsItem * item = collidingItems[0];
+        emit shipDestroyed();
         destroyShip(); // The ship was hit, so it has to be destroyed
 
         // Check if it was a missile
         Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
         if (aMissile != NULL) {
             // If a missile from the saucer hit the ship, destroy the ship
+
+            // Is this required? I moved out the signal as else the signal was only emited if the ship is destroyed by a saucer
             if (!aMissile->firedFromShip()) {
-                emit shipDestroyed();
             }
 
             // Destroy the missile
