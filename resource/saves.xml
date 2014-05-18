@@ -1,52 +1,62 @@
 <saves>
 	<save id="1">
-		<savename></savename>
-		<scores></scores>
-		<lives></lives>
+		<savename>test</savename>
+		<score>1000</score>
+		<lives>6</lives>
+		<level>3</level>
 	</save>
 	<save id="2">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="3">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="4">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="5">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="6">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="7">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="8">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="9">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 	<save id="10">
 		<savename></savename>
-		<scores></scores>
+		<score></score>
 		<lives></lives>
+		<level></level>
 	</save>
 </saves>

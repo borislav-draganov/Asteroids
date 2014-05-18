@@ -25,9 +25,10 @@ public:
 
 private slots:
     void newGame();
-    void loadGame();
-    void saveGame();
     void cntGame();
+    void showLoadGames();
+    void showSavedGames();
+    void pshdButton();
 
 public slots:
     void playExplosionSound();
@@ -48,16 +49,42 @@ private:
     void addShip();
     void displayGameOver();
     void setBtnVisibility(int);
+    void addButtons();
+    void loadGame(int);
+    void saveGame(int);
 
     int score;
     int level;
     int lives;
     int objectCounter;
-
+    QPushButton * test;
     QPushButton * btnSave;
     QPushButton * btnContinue;
     QPushButton * btnStart;
     QPushButton * btnLoad;
+
+
+    QPushButton * btnSave1;
+    QPushButton * btnSave2;
+    QPushButton * btnSave3;
+    QPushButton * btnSave4;
+    QPushButton * btnSave5;
+    QPushButton * btnSave6;
+    QPushButton * btnSave7;
+    QPushButton * btnSave8;
+    QPushButton * btnSave9;
+    QPushButton * btnSave10;
+
+    QPushButton * btnLoad1;
+    QPushButton * btnLoad2;
+    QPushButton * btnLoad3;
+    QPushButton * btnLoad4;
+    QPushButton * btnLoad5;
+    QPushButton * btnLoad6;
+    QPushButton * btnLoad7;
+    QPushButton * btnLoad8;
+    QPushButton * btnLoad9;
+    QPushButton * btnLoad10;
 
     QMenu *GameMenu;
     QAction *newGameAct;

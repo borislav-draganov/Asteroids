@@ -15,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QSplashScreen>
+#include <QXmlStreamReader>
 
 #define maxLevels   10
 
@@ -38,6 +39,15 @@ levelDef levelDescr[maxLevels] = {
     {10, 12, 3}
 };
 
+struct parsedXML
+{
+    QString SSavename;
+    int SScore;
+    int SLives;
+    int SLevel;
+};
+
+parsedXML xmlGames[11];
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -142,30 +152,8 @@ MainWindow::MainWindow(QWidget *parent) :
     laserEffect->setSource(QUrl::fromLocalFile(":FX/resource/laser.wav"));
     laserEffect->setVolume(0.5f);
 
+    addButtons();
 
-    btnSave = new QPushButton(border);
-    btnSave->setGeometry(QRect(225,280,201,40));
-    btnSave->setText("SAVE GAME");
-    btnSave->setHidden(true);
-    connect(btnSave, SIGNAL(released()), this, SLOT(saveGame()));
-
-    btnContinue = new QPushButton(border);
-    btnContinue->setGeometry(QRect(225,330,201,40));
-    btnContinue->setText("CONTINUE");
-    btnContinue->setHidden(true);
-    connect(btnContinue, SIGNAL(released()), this, SLOT(cntGame()));
-
-    btnStart = new QPushButton(border);
-    btnStart->setGeometry(QRect(225,280,201,40));
-    btnStart->setText("START NEW GAME");
-    btnStart->setHidden(false);
-    connect(btnStart, SIGNAL(released()), this, SLOT(newGame()));
-
-    btnLoad = new QPushButton(border);
-    btnLoad->setGeometry(QRect(225,330,201,40));
-    btnLoad->setText("LOAD SAVED GAME");
-    btnLoad->setHidden(false);
-    connect(btnLoad, SIGNAL(released()), this, SLOT(loadGame()));
 }
 
 int MainWindow::randInt(int low, int high) {
@@ -230,7 +218,7 @@ void MainWindow::newLevel()
 
 void MainWindow::newGame()
 {
-    setBtnVisibility(3);
+    setBtnVisibility(5);
 
     lives = 2;
     labelCurLives -> setText(QString::number(lives));
@@ -243,17 +231,210 @@ void MainWindow::newGame()
 }
 
 
-void MainWindow::loadGame()
+void MainWindow::loadGame(int loadGameID)
 {
+    lives = xmlGames[loadGameID].SLives;
+    labelCurLives -> setText(QString::number(lives));
+    level = xmlGames[loadGameID].SLevel;
+    labelCurLevel -> setText(QString::number(level));
+    score = xmlGames[loadGameID].SScore;
+    labelCurScore -> setText(QString::number(score));
+    scene->clear(); // Clear the scene
+    setBtnVisibility(5);
+    newLevel();
 }
 
-void MainWindow::saveGame()
+void MainWindow::saveGame(int saveGameID)
 {
+    showLoadGames();
+}
+
+void MainWindow::showLoadGames()
+{
+
+    QFile* file = new QFile(":/saves/resource/saves.xml");
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this,
+                              "ParseXML",
+                              "Couldn't open Save Games file",
+                              QMessageBox::Ok);
+        return;
+    }
+    QXmlStreamReader xml(file);
+    while(!xml.atEnd() && !xml.hasError())
+    {
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartElement)
+        {
+            if(xml.name() == "saves")
+            {
+                            continue;
+            }
+            if(xml.name() == "save")
+            {
+                QXmlStreamAttributes attributes = xml.attributes();
+                int tempID = attributes.value("id").toInt();
+                if(attributes.hasAttribute("id"))
+                {
+                    if( tempID > 10)
+                    {
+                        break;
+                    }
+                }
+                // Parse saves
+                xml.readNext();
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "save"))
+                {
+                    if(xml.name() == "savename" && xml.tokenType() == QXmlStreamReader::StartElement )
+                    {
+                        xml.readNext();
+                        if(xml.text().isEmpty())
+                        {
+                            xmlGames[tempID].SSavename  = "  _____  ";
+                        }
+                        else
+                        {
+                            xmlGames[tempID].SSavename = xml.text().toString();
+                        }
+                    }
+                    if(xml.name() == "score" && xml.tokenType() == QXmlStreamReader::StartElement)
+                    {
+                        xml.readNext();
+                        if(!xml.text().isNull())
+                        {
+                            xmlGames[tempID].SScore = xml.text().toInt();
+                        }
+                        else xmlGames[tempID].SScore = 0;
+                    }
+                    if(xml.name() == "lives" && xml.tokenType() == QXmlStreamReader::StartElement)
+                    {
+                        xml.readNext();
+                        if(!xml.text().isNull())
+                        {
+                            xmlGames[tempID].SLives = xml.text().toInt();
+                        }
+                        else xmlGames[tempID].SLives = 0;
+                    }
+                    if(xml.name() == "level" && xml.tokenType() == QXmlStreamReader::StartElement)
+                    {
+                        xml.readNext();
+                        if(!xml.text().isNull())
+                        {
+                            xmlGames[tempID].SLevel = xml.text().toInt();
+                        }
+                        else xmlGames[tempID].SLevel = 0;
+                    }
+                    xml.readNext();
+
+                }
+            }
+        }
+    }
+    if(xml.hasError()) {
+        QMessageBox::critical(this,
+                              "ParseXML",
+                              xml.errorString(),
+                              QMessageBox::Ok);
+    }
+
+
+
+    setBtnVisibility(5);
+
+    QString tempText;
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[1].SScore).arg(xmlGames[1].SLives).arg(xmlGames[1].SSavename).arg(xmlGames[1].SLevel);
+    btnLoad1->setText(tempText);
+    if(xmlGames[1].SLives == 0)
+    {
+        btnLoad1->setEnabled(false);
+    }
+    else btnLoad1->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[2].SScore).arg(xmlGames[2].SLives).arg(xmlGames[2].SSavename).arg(xmlGames[2].SLevel);
+    btnLoad2->setText(tempText);
+    if(xmlGames[2].SLives == 0)
+    {
+        btnLoad2->setEnabled(false);
+    }
+    else btnLoad2->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[3].SScore).arg(xmlGames[3].SLives).arg(xmlGames[3].SSavename).arg(xmlGames[3].SLevel);
+    btnLoad3->setText(tempText);
+    if(xmlGames[3].SLives == 0)
+    {
+        btnLoad3->setEnabled(false);
+    }
+    else btnLoad3->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[4].SScore).arg(xmlGames[4].SLives).arg(xmlGames[4].SSavename).arg(xmlGames[4].SLevel);
+    btnLoad4->setText(tempText);
+    if(xmlGames[4].SLives == 0)
+    {
+        btnLoad4->setEnabled(false);
+    }
+    else btnLoad4->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[5].SScore).arg(xmlGames[5].SLives).arg(xmlGames[5].SSavename).arg(xmlGames[5].SLevel);
+    btnLoad5->setText(tempText);
+    if(xmlGames[5].SLives == 0)
+    {
+        btnLoad5->setEnabled(false);
+    }
+    else btnLoad5->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[6].SScore).arg(xmlGames[6].SLives).arg(xmlGames[6].SSavename).arg(xmlGames[6].SLevel);
+    btnLoad6->setText(tempText);
+    if(xmlGames[6].SLives == 0)
+    {
+        btnLoad6->setEnabled(false);
+    }
+    else btnLoad6->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[7].SScore).arg(xmlGames[7].SLives).arg(xmlGames[7].SSavename).arg(xmlGames[7].SLevel);
+    btnLoad7->setText(tempText);
+    if(xmlGames[7].SLives == 0)
+    {
+        btnLoad7->setEnabled(false);
+    }
+    else btnLoad7->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[8].SScore).arg(xmlGames[8].SLives).arg(xmlGames[8].SSavename).arg(xmlGames[8].SLevel);
+    btnLoad8->setText(tempText);
+    if(xmlGames[8].SLives == 0)
+    {
+        btnLoad8->setEnabled(false);
+    }
+    else btnLoad8->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[9].SScore).arg(xmlGames[9].SLives).arg(xmlGames[9].SSavename).arg(xmlGames[9].SLevel);
+    btnLoad9->setText(tempText);
+    if(xmlGames[9].SLives == 0)
+    {
+        btnLoad9->setEnabled(false);
+    }
+    else btnLoad9->setEnabled(true);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[10].SScore).arg(xmlGames[10].SLives).arg(xmlGames[10].SSavename).arg(xmlGames[10].SLevel);
+    btnLoad10->setText(tempText);
+    if(xmlGames[10].SLives == 0)
+    {
+        btnLoad10->setEnabled(false);
+    }
+    else btnLoad10->setEnabled(true);
+
+    setBtnVisibility(3);
+
+}
+
+void MainWindow::showSavedGames()
+{
+    setBtnVisibility(5);
+    setBtnVisibility(4);
 }
 
 void MainWindow::cntGame()
 {
-    setBtnVisibility(3);
+    setBtnVisibility(5);
     updateLevel();
     newLevel();
 }
@@ -342,11 +523,11 @@ void MainWindow::createActions()
 
      loadGameAct = new QAction(tr("&Load"), this);
      loadGameAct->setShortcuts(QKeySequence::Open);
-     connect(loadGameAct, SIGNAL(triggered()), this, SLOT(loadGame()));
+     connect(loadGameAct, SIGNAL(triggered()), this, SLOT(showLoadGames()));
 
      saveGameAct = new QAction(tr("&Save"), this);
      saveGameAct->setShortcuts(QKeySequence::Save);
-     connect(saveGameAct, SIGNAL(triggered()), this, SLOT(saveGame()));
+     connect(saveGameAct, SIGNAL(triggered()), this, SLOT(showSavedGames()));
 
 }
 
@@ -362,7 +543,9 @@ void MainWindow::createMenus()
 // Options:
 // 1 - Show btnSave and btnContinue
 // 2 - Show btnStart and btnLoad
-// 3 (default) - Hide all buttons
+// 3 - Show Load buttons
+// 4 - Show Save buttons
+// 5 (default) - Hide all buttons
 
 
 void MainWindow::setBtnVisibility(int temp)
@@ -377,13 +560,306 @@ void MainWindow::setBtnVisibility(int temp)
         btnStart->setVisible(true);
         btnLoad->setVisible(true);
     }
+    else if(temp == 3)
+    {
+        btnLoad1->setVisible(true);
+        btnLoad2->setVisible(true);
+        btnLoad3->setVisible(true);
+        btnLoad4->setVisible(true);
+        btnLoad5->setVisible(true);
+        btnLoad6->setVisible(true);
+        btnLoad7->setVisible(true);
+        btnLoad8->setVisible(true);
+        btnLoad9->setVisible(true);
+        btnLoad10->setVisible(true);
+    }
+    else if(temp == 4)
+    {
+        btnSave1->setVisible(true);
+        btnSave2->setVisible(true);
+        btnSave3->setVisible(true);
+        btnSave4->setVisible(true);
+        btnSave5->setVisible(true);
+        btnSave6->setVisible(true);
+        btnSave7->setVisible(true);
+        btnSave8->setVisible(true);
+        btnSave9->setVisible(true);
+        btnSave10->setVisible(true);
+    }
     else
     {
         btnSave->setVisible(false);
         btnStart->setVisible(false);
         btnContinue->setVisible(false);
         btnLoad->setVisible(false);
+
+        btnSave1->setVisible(false);
+        btnSave2->setVisible(false);
+        btnSave3->setVisible(false);
+        btnSave4->setVisible(false);
+        btnSave5->setVisible(false);
+        btnSave6->setVisible(false);
+        btnSave7->setVisible(false);
+        btnSave8->setVisible(false);
+        btnSave9->setVisible(false);
+        btnSave10->setVisible(false);
+
+        btnLoad1->setVisible(false);
+        btnLoad2->setVisible(false);
+        btnLoad3->setVisible(false);
+        btnLoad4->setVisible(false);
+        btnLoad5->setVisible(false);
+        btnLoad6->setVisible(false);
+        btnLoad7->setVisible(false);
+        btnLoad8->setVisible(false);
+        btnLoad9->setVisible(false);
+        btnLoad10->setVisible(false);
     }
+}
+
+
+void MainWindow::addButtons()
+{
+
+    // Standard buttons
+
+    btnSave = new QPushButton(border);
+    btnSave->setGeometry(QRect(225,280,201,40));
+    btnSave->setText("SAVE GAME");
+    btnSave->setVisible(false);
+    connect(btnSave, SIGNAL(released()), this, SLOT(showSavedGames()));
+
+    btnContinue = new QPushButton(border);
+    btnContinue->setGeometry(QRect(225,330,201,40));
+    btnContinue->setText("CONTINUE");
+    btnContinue->setVisible(false);
+    connect(btnContinue, SIGNAL(released()), this, SLOT(cntGame()));
+
+    btnStart = new QPushButton(border);
+    btnStart->setGeometry(QRect(225,280,201,40));
+    btnStart->setText("START NEW GAME");
+    btnStart->setVisible(true);
+    connect(btnStart, SIGNAL(released()), this, SLOT(newGame()));
+
+    btnLoad = new QPushButton(border);
+    btnLoad->setGeometry(QRect(225,330,201,40));
+    btnLoad->setText("LOAD SAVED GAME");
+    btnLoad->setVisible(true);
+    connect(btnLoad, SIGNAL(released()), this, SLOT(showLoadGames()));
+
+    // Save game buttons
+
+    btnSave1 = new QPushButton(border);
+    btnSave1->setGeometry(QRect(175,120,301,40));
+    btnSave1->setText("SAVE GAME 1");
+    btnSave1->setVisible(false);
+    connect(btnSave1, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave2 = new QPushButton(border);
+    btnSave2->setGeometry(QRect(175,158,301,40));
+    btnSave2->setText("SAVE GAME 2");
+    btnSave2->setVisible(false);
+    connect(btnSave2, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave3 = new QPushButton(border);
+    btnSave3->setGeometry(QRect(175,196,301,40));
+    btnSave3->setText("SAVE GAME 3");
+    btnSave3->setVisible(false);
+    connect(btnSave3, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave4 = new QPushButton(border);
+    btnSave4->setGeometry(QRect(175,234,301,40));
+    btnSave4->setText("SAVE GAME 4");
+    btnSave4->setVisible(false);
+    connect(btnSave4, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave5 = new QPushButton(border);
+    btnSave5->setGeometry(QRect(175,272,301,40));
+    btnSave5->setText("SAVE GAME 5");
+    btnSave5->setVisible(false);
+    connect(btnSave5, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave6 = new QPushButton(border);
+    btnSave6->setGeometry(QRect(175,310,301,40));
+    btnSave6->setText("SAVE GAME 6");
+    btnSave6->setVisible(false);
+    connect(btnSave6, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave7 = new QPushButton(border);
+    btnSave7->setGeometry(QRect(175,348,301,40));
+    btnSave7->setText("SAVE GAME 7");
+    btnSave7->setVisible(false);
+    connect(btnSave7, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave8 = new QPushButton(border);
+    btnSave8->setGeometry(QRect(175,386,301,40));
+    btnSave8->setText("SAVE GAME 8");
+    btnSave8->setVisible(false);
+    connect(btnSave8, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave9 = new QPushButton(border);
+    btnSave9->setGeometry(QRect(175,424,301,40));
+    btnSave9->setText("SAVE GAME 9");
+    btnSave9->setVisible(false);
+    connect(btnSave9, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnSave10 = new QPushButton(border);
+    btnSave10->setGeometry(QRect(175,462,301,40));
+    btnSave10->setText("SAVE GAME 10");
+    btnSave10->setVisible(false);
+    connect(btnSave10, SIGNAL(released()), this, SLOT(pshdButton()));
+
+
+    // Load game buttons
+
+    btnLoad1 = new QPushButton(border);
+    btnLoad1->setGeometry(QRect(175,120,301,40));
+    btnLoad1->setText("LOAD GAME 1");
+    btnLoad1->setVisible(false);
+    connect(btnLoad1, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad2 = new QPushButton(border);
+    btnLoad2->setGeometry(QRect(175,158,301,40));
+    btnLoad2->setText("LOAD GAME 2");
+    btnLoad2->setVisible(false);
+    connect(btnLoad2, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad3 = new QPushButton(border);
+    btnLoad3->setGeometry(QRect(175,196,301,40));
+    btnLoad3->setText("LOAD GAME 3");
+    btnLoad3->setVisible(false);
+    connect(btnLoad3, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad4 = new QPushButton(border);
+    btnLoad4->setGeometry(QRect(175,234,301,40));
+    btnLoad4->setText("LOAD GAME 4");
+    btnLoad4->setVisible(false);
+    connect(btnLoad4, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad5 = new QPushButton(border);
+    btnLoad5->setGeometry(QRect(175,272,301,40));
+    btnLoad5->setText("LOAD GAME 5");
+    btnLoad5->setVisible(false);
+    connect(btnLoad5, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad6 = new QPushButton(border);
+    btnLoad6->setGeometry(QRect(175,310,301,40));
+    btnLoad6->setText("LOAD GAME 6");
+    btnLoad6->setVisible(false);
+    connect(btnLoad6, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad7 = new QPushButton(border);
+    btnLoad7->setGeometry(QRect(175,348,301,40));
+    btnLoad7->setText("LOAD GAME 7");
+    btnLoad7->setVisible(false);
+    connect(btnLoad7, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad8 = new QPushButton(border);
+    btnLoad8->setGeometry(QRect(175,386,301,40));
+    btnLoad8->setText("LOAD GAME 8");
+    btnLoad8->setVisible(false);
+    connect(btnLoad8, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad9 = new QPushButton(border);
+    btnLoad9->setGeometry(QRect(175,424,301,40));
+    btnLoad9->setText("LOAD GAME 9");
+    btnLoad9->setVisible(false);
+    connect(btnLoad9, SIGNAL(released()), this, SLOT(pshdButton()));
+
+    btnLoad10 = new QPushButton(border);
+    btnLoad10->setGeometry(QRect(175,462,301,40));
+    btnLoad10->setText("LOAD GAME 10");
+    btnLoad10->setVisible(false);
+    connect(btnLoad10, SIGNAL(released()), this, SLOT(pshdButton()));
+
+}
+
+// We will use this slot as the QT buttons do not support buttonID
+
+void MainWindow::pshdButton()
+{
+    QPushButton *clckedButton = (QPushButton *)sender();
+    if(btnSave1 == clckedButton)
+    {
+        saveGame(1);
+    }
+    else if(btnSave2 == clckedButton)
+    {
+        saveGame(2);
+    }
+    else if(btnSave3 == clckedButton)
+    {
+        saveGame(3);
+    }
+    else if(btnSave4 == clckedButton)
+    {
+        saveGame(4);
+    }
+    else if(btnSave5 == clckedButton)
+    {
+        saveGame(5);
+    }
+    else if(btnSave6 == clckedButton)
+    {
+        saveGame(6);
+    }
+    else if(btnSave7 == clckedButton)
+    {
+        saveGame(7);
+    }
+    else if(btnSave8 == clckedButton)
+    {
+        saveGame(8);
+    }
+    else if(btnSave9 == clckedButton)
+    {
+        saveGame(9);
+    }
+    else if(btnSave10 == clckedButton)
+    {
+        saveGame(10);
+    }
+    else if(btnLoad1 == clckedButton)
+    {
+        loadGame(1);
+    }
+    else if(btnLoad2 == clckedButton)
+    {
+        loadGame(2);
+    }
+    else if(btnLoad3 == clckedButton)
+    {
+        loadGame(3);
+    }
+    else if(btnLoad4 == clckedButton)
+    {
+        loadGame(4);
+    }
+    else if(btnLoad5 == clckedButton)
+    {
+        loadGame(5);
+    }
+    else if(btnLoad6 == clckedButton)
+    {
+        loadGame(6);
+    }
+    else if(btnLoad7 == clckedButton)
+    {
+        loadGame(7);
+    }
+    else if(btnLoad8 == clckedButton)
+    {
+        loadGame(8);
+    }
+    else if(btnLoad9 == clckedButton)
+    {
+        loadGame(9);
+    }
+    else if(btnLoad10 == clckedButton)
+    {
+        loadGame(10);
+    }
+
 }
 
 MainWindow::~MainWindow()

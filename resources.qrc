@@ -21,4 +21,7 @@
     <qresource prefix="/GameOver">
         <file>resource/GameOver.jpg</file>
     </qresource>
+    <qresource prefix="/saves">
+        <file>resource/saves.xml</file>
+    </qresource>
 </RCC>
