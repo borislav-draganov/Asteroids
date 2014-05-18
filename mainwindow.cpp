@@ -3,6 +3,7 @@
 #include "saucer.h"
 #include "ship.h"
 
+
 #include <QMenuBar>
 #include <QApplication>
 #include <QtGui>
@@ -70,16 +71,18 @@ MainWindow::MainWindow(QWidget *parent) :
     // Set font
     QFont smallFont( "helvetica", 14 );
 
-    labelScore = new QLabel( tr("Score"), topWin );
+    labelScore = new QLabel( tr("SCORE"), topWin );
     labelScore->setFont( smallFont );
     horizontalBox->addWidget( labelScore );
 
     labelCurScore = new QLabel(topWin);
     labelCurScore -> setText(QString::number(score));
     labelCurScore ->setFont( smallFont );
+    //labelCurScore -> setAlignment(Qt::AlignRight);
+    //labelCurScore -> setAlignment(Qt::AlignHCenter);
     horizontalBox->addWidget( labelCurScore );
 
-    labelLevel = new QLabel( tr("Level"), topWin );
+    labelLevel = new QLabel( tr("LEVEL"), topWin );
     labelLevel->setFont( smallFont );
     horizontalBox->addWidget( labelLevel );
 
@@ -88,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     labelCurLevel ->setFont( smallFont );
     horizontalBox->addWidget( labelCurLevel );
 
-    labelLives = new QLabel( tr("Lives"), topWin );
+    labelLives = new QLabel( tr("LIVES"), topWin );
     labelLives->setFont( smallFont );
     horizontalBox->addWidget( labelLives );
 
@@ -140,6 +143,29 @@ MainWindow::MainWindow(QWidget *parent) :
     laserEffect->setVolume(0.5f);
 
 
+    btnSave = new QPushButton(border);
+    btnSave->setGeometry(QRect(225,280,201,40));
+    btnSave->setText("SAVE GAME");
+    btnSave->setHidden(true);
+    connect(btnSave, SIGNAL(released()), this, SLOT(saveGame()));
+
+    btnContinue = new QPushButton(border);
+    btnContinue->setGeometry(QRect(225,330,201,40));
+    btnContinue->setText("CONTINUE");
+    btnContinue->setHidden(true);
+    connect(btnContinue, SIGNAL(released()), this, SLOT(cntGame()));
+
+    btnStart = new QPushButton(border);
+    btnStart->setGeometry(QRect(225,280,201,40));
+    btnStart->setText("START NEW GAME");
+    btnStart->setHidden(false);
+    connect(btnStart, SIGNAL(released()), this, SLOT(newGame()));
+
+    btnLoad = new QPushButton(border);
+    btnLoad->setGeometry(QRect(225,330,201,40));
+    btnLoad->setText("LOAD SAVED GAME");
+    btnLoad->setHidden(false);
+    connect(btnLoad, SIGNAL(released()), this, SLOT(loadGame()));
 }
 
 int MainWindow::randInt(int low, int high) {
@@ -204,6 +230,8 @@ void MainWindow::newLevel()
 
 void MainWindow::newGame()
 {
+    setBtnVisibility(3);
+
     lives = 2;
     labelCurLives -> setText(QString::number(lives));
     level = 1;
@@ -223,6 +251,12 @@ void MainWindow::saveGame()
 {
 }
 
+void MainWindow::cntGame()
+{
+    setBtnVisibility(3);
+    updateLevel();
+    newLevel();
+}
 
 void MainWindow::updateScore(int size)
 {
@@ -244,8 +278,7 @@ void MainWindow::updateObjectCounter(int upd)
     objectCounter+=upd;
 
     if(objectCounter==0){
-        updateLevel();
-        newLevel();
+        setBtnVisibility(1);
     }
 }
 
@@ -267,7 +300,11 @@ void MainWindow::updateLives()
         addShip();
     }
     // If no more lives left display "Game Over"
-    else displayGameOver();
+    else
+    {
+        setBtnVisibility(2);
+        displayGameOver();
+    }
 
 }
 
@@ -319,6 +356,34 @@ void MainWindow::createMenus()
     GameMenu->addAction(newGameAct);
     GameMenu->addAction(loadGameAct);
     GameMenu->addAction(saveGameAct);
+}
+
+// Function to set the buttons visiblity
+// Options:
+// 1 - Show btnSave and btnContinue
+// 2 - Show btnStart and btnLoad
+// 3 (default) - Hide all buttons
+
+
+void MainWindow::setBtnVisibility(int temp)
+{
+    if(temp == 1)
+    {
+        btnSave->setVisible(true);
+        btnContinue->setVisible(true);
+    }
+    else if(temp == 2)
+    {
+        btnStart->setVisible(true);
+        btnLoad->setVisible(true);
+    }
+    else
+    {
+        btnSave->setVisible(false);
+        btnStart->setVisible(false);
+        btnContinue->setVisible(false);
+        btnLoad->setVisible(false);
+    }
 }
 
 MainWindow::~MainWindow()

@@ -27,6 +27,7 @@ private slots:
     void newGame();
     void loadGame();
     void saveGame();
+    void cntGame();
 
 public slots:
     void playExplosionSound();
@@ -46,11 +47,17 @@ private:
     void newLevel();
     void addShip();
     void displayGameOver();
+    void setBtnVisibility(int);
 
     int score;
     int level;
     int lives;
     int objectCounter;
+
+    QPushButton * btnSave;
+    QPushButton * btnContinue;
+    QPushButton * btnStart;
+    QPushButton * btnLoad;
 
     QMenu *GameMenu;
     QAction *newGameAct;
