@@ -243,15 +243,113 @@ void MainWindow::loadGame(int loadGameID)
     newLevel();
 }
 
-void MainWindow::saveGame(int saveGameID)
+void MainWindow::saveGame(int saveGameSlotID)
 {
-    showLoadGames();
+    int answer = 1;
+    if(xmlGames[saveGameSlotID].SScore > 0)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Asteroids", "Do you want to replace this save?",
+                                        QMessageBox::Yes|QMessageBox::No);
+        if(reply == QMessageBox::Yes){
+            answer = 1;
+        }
+        else answer = 0;
+    }
+
+    if(answer == 0)
+    {
+        setBtnVisibility(5);
+        setBtnVisibility(1);
+    }
+
+    if(answer == 1)
+    {
+        saveCurGame(saveGameSlotID);
+    }
 }
 
-void MainWindow::showLoadGames()
-{
 
-    QFile* file = new QFile(":/saves/resource/saves.xml");
+void MainWindow::saveCurGame(int saveGameSlotID){
+
+    parseSavesXML();
+
+    QFile* file = new QFile("saves.xml");
+    if (!file->open(QIODevice::ReadWrite | QIODevice::Text)) {
+        QMessageBox::critical(this,
+                              "ParseXML",
+                              "Couldn't open Save Games file",
+                              QMessageBox::Ok);
+        return;
+    }
+
+    QXmlStreamWriter stream(file);
+
+    // Setup and start the stream
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("saves");
+
+    // Write the file - 10 identical elements
+    for(int i = 1; i<=10; i++)
+    {
+        if(i == saveGameSlotID)
+        {
+            bool ok;
+            QString savename = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                                              tr("User name:"), QLineEdit::Normal,
+                                                              QDir::home().dirName(), &ok);
+            if(ok)
+            {
+                xmlGames[i].SSavename = savename;
+                xmlGames[i].SScore = score;
+                xmlGames[i].SLives = lives;
+                xmlGames[i].SLevel = level;
+            }
+        }
+        // Write <save id= ? >
+        stream.writeStartElement("save");
+        stream.writeAttribute("id",QString::number(i));
+
+        // Wite <savename>
+
+        stream.writeStartElement("savename");
+        stream.writeCharacters(xmlGames[i].SSavename);
+        stream.writeEndElement();
+
+        // Write <score>
+        stream.writeStartElement("score");
+        stream.writeCharacters(QString::number(xmlGames[i].SScore));
+        stream.writeEndElement();
+
+        // Write <lives>
+        stream.writeStartElement("lives");
+        stream.writeCharacters(QString::number(xmlGames[i].SLives));
+        stream.writeEndElement();
+
+        // Write <level>
+        stream.writeStartElement("level");
+        stream.writeCharacters(QString::number(xmlGames[i].SLevel));
+        stream.writeEndElement();
+
+        // Write </save>
+        stream.writeEndElement();
+    }
+    // close the document
+    stream.writeEndElement();
+    stream.writeEndDocument();
+
+
+    file->close();
+
+    setBtnVisibility(5);
+    setBtnVisibility(1);
+
+}
+
+void MainWindow::parseSavesXML()
+{
+    QFile* file = new QFile("saves.xml");
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::critical(this,
                               "ParseXML",
@@ -289,7 +387,7 @@ void MainWindow::showLoadGames()
                         xml.readNext();
                         if(xml.text().isEmpty())
                         {
-                            xmlGames[tempID].SSavename  = "  _____  ";
+                            xmlGames[tempID].SSavename = "  _____  ";
                         }
                         else
                         {
@@ -331,12 +429,20 @@ void MainWindow::showLoadGames()
     }
     if(xml.hasError()) {
         QMessageBox::critical(this,
-                              "ParseXML",
+                              "ParseXML2",
                               xml.errorString(),
                               QMessageBox::Ok);
     }
 
+    file->close();
 
+}
+
+void MainWindow::showLoadGames()
+{
+
+
+    parseSavesXML();
 
     setBtnVisibility(5);
 
@@ -427,6 +533,48 @@ void MainWindow::showLoadGames()
 
 void MainWindow::showSavedGames()
 {
+
+    parseSavesXML();
+
+    QString tempText;
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[1].SScore).arg(xmlGames[1].SLives).arg(xmlGames[1].SSavename).arg(xmlGames[1].SLevel);
+    btnSave1->setText(tempText);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[2].SScore).arg(xmlGames[2].SLives).arg(xmlGames[2].SSavename).arg(xmlGames[2].SLevel);
+    btnSave2->setText(tempText);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[3].SScore).arg(xmlGames[3].SLives).arg(xmlGames[3].SSavename).arg(xmlGames[3].SLevel);
+    btnSave3->setText(tempText);
+
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[4].SScore).arg(xmlGames[4].SLives).arg(xmlGames[4].SSavename).arg(xmlGames[4].SLevel);
+    btnSave4->setText(tempText);
+
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[5].SScore).arg(xmlGames[5].SLives).arg(xmlGames[5].SSavename).arg(xmlGames[5].SLevel);
+    btnSave5->setText(tempText);
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[6].SScore).arg(xmlGames[6].SLives).arg(xmlGames[6].SSavename).arg(xmlGames[6].SLevel);
+    btnSave6->setText(tempText);
+
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[7].SScore).arg(xmlGames[7].SLives).arg(xmlGames[7].SSavename).arg(xmlGames[7].SLevel);
+    btnSave7->setText(tempText);
+
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[8].SScore).arg(xmlGames[8].SLives).arg(xmlGames[8].SSavename).arg(xmlGames[8].SLevel);
+    btnSave8->setText(tempText);
+
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[9].SScore).arg(xmlGames[9].SLives).arg(xmlGames[9].SSavename).arg(xmlGames[9].SLevel);
+    btnSave9->setText(tempText);
+
+
+    tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[10].SScore).arg(xmlGames[10].SLives).arg(xmlGames[10].SSavename).arg(xmlGames[10].SLevel);
+    btnSave10->setText(tempText);
+
+
     setBtnVisibility(5);
     setBtnVisibility(4);
 }

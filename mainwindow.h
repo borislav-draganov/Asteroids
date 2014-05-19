@@ -53,6 +53,8 @@ private:
     void addButtons();
     void loadGame(int);
     void saveGame(int);
+    void saveCurGame(int);
+    void parseSavesXML();
 
     int score;
     int level;
