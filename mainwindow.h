@@ -22,6 +22,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     static int randInt(int , int );
+    QPointF getShipCoordinates();
 
 private slots:
     void newGame();
@@ -106,7 +107,7 @@ private:
     QSoundEffect *explosionEffect;
     QSoundEffect *laserEffect;
 
-    Ship *theShip;
+    QPointer<Ship> theShip;
 };
 
 #endif // MAINWINDOW_H

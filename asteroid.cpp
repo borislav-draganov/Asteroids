@@ -1,6 +1,4 @@
 #include "asteroid.h"
-#include "missile.h"
-#include "mainwindow.h"
 
 /* Constructor
  * @param size : 1 - small, 2 - medium, 3 - large
@@ -43,6 +41,9 @@ Asteroid::Asteroid(int size, QObject *parent) : QObject(parent) {
 
     // Connect to the slot that updates the object counter
     connect(this, SIGNAL(updateObjectCountOnKill(int)), parent, SLOT(updateObjectCounter(int)));
+
+    // Update the object counter: +1 as we spawn the asteroid
+    emit updateObjectCountOnKill(1);
 
     // Nullify the pointer for the explosion .gif
     gif_anim = 0;
@@ -127,8 +128,7 @@ void Asteroid::advance(int step){
 // Destroy the asteroid and brake it down to smaller one if possible
 void Asteroid::destoyItem()
 {
-    // Update the object counter: -1 as we will remove the asteroid
-    emit updateObjectCountOnKill(-1);
+
 
     // Use the current coordinates
     double thisX = x();
@@ -139,24 +139,17 @@ void Asteroid::destoyItem()
         QObject *asteroidParent = parent();
         int childSize = --size;
 
-        // Update the object counter: +2 as we will spawn 2 new asteroids
-        emit updateObjectCountOnKill(2);
-
         // Build the first child and set its coordinates somewhere within the parent asteroid
         Asteroid *childOne = new Asteroid(childSize, asteroidParent);
         double oneX = MainWindow::randInt(thisX - length/2, thisX + length/2);
         double oneY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childOne->setPos(oneX, oneY);
-        connect(childOne, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
-        connect(childOne, SIGNAL(updateObjectCountOnKill(int)),asteroidParent,SLOT(updateObjectCounter(int)));
 
         // Build the second child and set its coordinates somewhere within the parent asteroid
         Asteroid *childTwo = new Asteroid(childSize, asteroidParent);
         double twoX = MainWindow::randInt(thisX - length/2, thisX + length/2);
         double twoY = MainWindow::randInt(thisY - length/2, thisY + length/2);
         childTwo->setPos(twoX, twoY);
-        connect(childTwo, SIGNAL(asteroidKilled(int)), asteroidParent, SLOT(updateScore(int)));
-        connect(childTwo, SIGNAL(updateObjectCountOnKill(int)), asteroidParent, SLOT(updateObjectCounter(int)));
 
         // Add both child asteroids to the scene
         scene()->addItem(childOne);
@@ -185,6 +178,9 @@ void Asteroid::destoyItem()
 
     // Remove the asteroid from the field
     scene()->removeItem(this);
+
+    // Update the object counter: -1 as we will remove the asteroid
+    emit updateObjectCountOnKill(-1);
 }
 
 Asteroid::~Asteroid()

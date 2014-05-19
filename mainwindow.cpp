@@ -153,7 +153,6 @@ MainWindow::MainWindow(QWidget *parent) :
     laserEffect->setVolume(0.5f);
 
     addButtons();
-
 }
 
 int MainWindow::randInt(int low, int high) {
@@ -189,7 +188,6 @@ void MainWindow::newLevel()
         QPointer<Asteroid> aSmallAsteroid = new Asteroid(1, this);
         QPointer<Asteroid> aMediumAsteroid = new Asteroid(2, this);
         QPointer<Asteroid> aBigAsteroid = new Asteroid(3, this);
-        updateObjectCounter(3); // Adding 3 objects as we spawn 3 asteroids one of each size
 
         aSmallAsteroid->setPos(randInt(-200,200), randInt(-200,200));
         scene->addItem(aSmallAsteroid);
@@ -205,12 +203,11 @@ void MainWindow::newLevel()
     // Add the saucers according to the level, substracting 1 from the level because we start from 0 in the array
     int saucerTotal = levelDescr[level - 1].saucerNum;
     for(int i = 0; i < saucerTotal; i++) {
-        updateObjectCounter(2); // Adding 2 objects as we spawn 2 saucers one of each size
-        QPointer<Saucer> aSmallSaucer = new Saucer(1, theShip, this);
+        QPointer<Saucer> aSmallSaucer = new Saucer(1, this);
         aSmallSaucer->setPos(200, -200);
         scene->addItem(aSmallSaucer);
 
-        QPointer<Saucer> aBigSaucer = new Saucer(2, theShip, this);
+        QPointer<Saucer> aBigSaucer = new Saucer(2, this);
         aBigSaucer->setPos(-200, -200);
         scene->addItem(aBigSaucer);
     }
@@ -226,7 +223,9 @@ void MainWindow::newGame()
     labelCurLevel -> setText(QString::number(level));
     score = 0;
     labelCurScore -> setText(QString::number(score));
+
     scene->clear(); // Clear the scene
+
     newLevel();
 }
 
@@ -860,6 +859,15 @@ void MainWindow::pshdButton()
         loadGame(10);
     }
 
+}
+
+// Send the ship's coordinates - (0,0) if the ship is currently destroyed
+QPointF MainWindow::getShipCoordinates() {
+    if(!theShip.isNull()) {
+        return QPointF(theShip->x(), theShip->y());
+    } else {
+        return QPointF(0, 0);
+    }
 }
 
 MainWindow::~MainWindow()

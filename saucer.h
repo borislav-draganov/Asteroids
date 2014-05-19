@@ -21,7 +21,7 @@ class Saucer : public QObject, public QGraphicsItem
     Q_OBJECT
 
 public:
-    Saucer(int size, Ship *target, QObject *parent = 0);                                        // Constructor - size: 1 - small, 2 - large; target - player's ship
+    Saucer(int size, QObject *parent = 0);                                                      // Constructor - size: 1 - small, 2 - large; target - player's ship
 
     QRectF boundingRect() const;                                                                // Determine the bounding rectangle of the saucer
     QPainterPath shape() const;                                                                 // Determine the shape of the saucer
@@ -37,7 +37,6 @@ private:
      int cornerCoor;                // Top-left coordinate of the saucer - (0,0) will be the center
      int length;                    // Length of the saucer
      qreal speed;                   // Speed of the saucer - negative value
-     Ship *target;                  // Pointer to the player ship that's going to be targeted
      QPixmap img;                   // The image of the saucer
      QTimer *fireTimer;             // The timer that fires missiles
      QPointer<QLabel> gif_anim ;    // The explosion effect .gif

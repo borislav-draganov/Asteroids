@@ -29,7 +29,6 @@ public:
     QRectF boundingRect() const;    // Create the bounding rectangle of the ship
     QPainterPath shape() const;     // Create the shape of the ship
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);     // Paint the ship
-    QPointF coordinates();          // Current coordinates of the ship
     void destroyShip();             // Destroy the ship
 
 protected:

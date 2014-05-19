@@ -1,6 +1,9 @@
 #ifndef ASTEROID_H
 #define ASTEROID_H
 
+#include "missile.h"
+#include "mainwindow.h"
+
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>

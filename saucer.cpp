@@ -16,11 +16,10 @@ static double TwoPi = 2.0 * Pi;
  * @param size : 1 - small, 2 - large
  * @param parent : the parent in the Qt hierarchy
  */
-Saucer::Saucer(int size, Ship *target, QObject *parent) : QObject(parent)
+Saucer::Saucer(int size, QObject *parent) : QObject(parent)
 {
     // Set the size of the saucer
     this->size = size;
-    this->target = target;
 
     // Set the movement speed
     speed = - ( 2 / size );
@@ -48,6 +47,9 @@ Saucer::Saucer(int size, Ship *target, QObject *parent) : QObject(parent)
 
     // Connect to the slot that updates the object counter
     connect(this, SIGNAL(updateObjectCountOnKill(int)), parent, SLOT(updateObjectCounter(int)));
+
+    // Update the object counter: +1 as we spawn the saucer
+    emit updateObjectCountOnKill(1);
 
     // Nullify the pointer for the explosion .gif
     gif_anim = 0;
@@ -177,11 +179,9 @@ void Saucer::destoyItem()
 // Fire a missile towards the player ship
 void Saucer::fireMissile()
 {
-    // Don't shoot if the target is not on the scene
-    if(!target->scene()) { return; }
-
     // Get the target's coordinates
-    QPointF targetCoor = target->coordinates();
+    MainWindow* mainWindow = qobject_cast<MainWindow*>(parent());
+    QPointF targetCoor = mainWindow->getShipCoordinates();
 
     // Calculate the angle
     double deltaY = targetCoor.y() - y();

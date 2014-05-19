@@ -74,11 +74,6 @@ void Ship::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     //painter->fillPath(shipShape, brush);
 }
 
-QPointF Ship::coordinates()
-{
-    return QPointF(x(), y());
-}
-
 void Ship::advance(int step) {
     if (!step) return;
 
