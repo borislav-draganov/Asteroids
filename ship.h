@@ -48,6 +48,7 @@ private:
     QPixmap shipImage;              // The image of the ship
     QPointer<QLabel> gif_anim;      // The explosion effect .gif
     QTimer *flash;                  // Timer for flashing the ship when it is created
+    double inertia;                 // The Inertia of the ship
 
 signals:
     void shipDestroyed();           // Tell the main window that a ship has been destroyed

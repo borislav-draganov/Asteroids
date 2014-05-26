@@ -39,7 +39,8 @@ Ship::Ship(QObject *parent) : QObject(parent) {
     flash = new QTimer(this);
     flash->start(100);
     connect(flash, SIGNAL(timeout()), this, SLOT(flashEvent()));
-    //flash->deleteLater();
+
+    inertia = 0;
 
     setFocus();
 }
@@ -99,6 +100,15 @@ void Ship::advance(int step) {
     if (keyLeft) setRotation(rotation() - angle);
     if (keyRight) setRotation(rotation() + angle);
 
+    // Ship Inertia
+    if(inertia < 0) {
+        // Decrease the inertion
+        inertia += 0.1;
+
+        // Move the Ship
+        setPos(mapToParent(0, inertia));
+    }
+
     // Respond to collision with other items
     if (flashes < 1) {
         QList<QGraphicsItem *> collidingItems = scene()->collidingItems(this);
@@ -110,13 +120,7 @@ void Ship::advance(int step) {
             // Check if it was a missile
             Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
             if (aMissile != NULL) {
-                // If a missile from the saucer hit the ship, destroy the ship
-
-                // Is this required? I moved out the signal as else the signal was only emited if the ship is destroyed by a saucer
-                if (!aMissile->firedFromShip()) {
-                }
-
-                // Destroy the missile
+                // If a missile hit the ship, destroy the missile
                 aMissile->destoyItem();
                 return;
             }
@@ -163,9 +167,9 @@ void Ship::keyPressEvent(QKeyEvent *event) {
 
 void Ship::keyReleaseEvent(QKeyEvent *event) {
     if(event->isAutoRepeat()) { return; }
-    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) keyUP = false;
-    if (event->key() == Qt::Key_Left || event->key() == Qt::Key_A) keyLeft = false;
-    if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) keyRight = false;
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) { keyUP = false; inertia = speed; }
+    if (event->key() == Qt::Key_Left || event->key() == Qt::Key_A) { keyLeft = false; }
+    if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) { keyRight = false; }
 }
 
 void Ship::fireMissile() {
