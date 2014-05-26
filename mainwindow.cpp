@@ -27,8 +27,8 @@ struct levelDef
 };
 
 levelDef levelDescr[maxLevels] = {
-    { 1,  3, 1},
-    { 2,  4, 1},
+    { 1,  1, 0},
+    { 2,  2, 1},
     { 3,  5, 1},
     { 4,  6, 2},
     { 5,  7, 2},
@@ -172,6 +172,9 @@ void MainWindow::addShip()
 
 void MainWindow::newLevel()
 {
+    // Remove the old Ship if any
+    if(theShip) { scene->removeItem(theShip); theShip->deleteLater(); }
+
     setObjectCounter(0); // setting the objectCounter to 0 before creating the level
 
     // Add the ship

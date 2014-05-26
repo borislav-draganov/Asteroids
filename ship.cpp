@@ -1,6 +1,9 @@
 #include "ship.h"
 
 Ship::Ship(QObject *parent) : QObject(parent) {
+    // Flashes count
+    flashes = 20;
+
     // Ship dimmensions
     width = 60;
     height = 45;
@@ -31,6 +34,12 @@ Ship::Ship(QObject *parent) : QObject(parent) {
 
     // Connect to the slot that plays the sound
     connect(this, SIGNAL(explosionSound()), parent, SLOT(playExplosionSound()));
+
+    // Flashing
+    flash = new QTimer(this);
+    flash->start(100);
+    connect(flash, SIGNAL(timeout()), this, SLOT(flashEvent()));
+    //flash->deleteLater();
 
     setFocus();
 }
@@ -91,24 +100,26 @@ void Ship::advance(int step) {
     if (keyRight) setRotation(rotation() + angle);
 
     // Respond to collision with other items
-    QList<QGraphicsItem *> collidingItems = scene()->collidingItems(this);
-    if (!collidingItems.isEmpty()) {
-        QGraphicsItem * item = collidingItems[0];
-        emit shipDestroyed();
-        destroyShip(); // The ship was hit, so it has to be destroyed
+    if (flashes < 1) {
+        QList<QGraphicsItem *> collidingItems = scene()->collidingItems(this);
+        if (!collidingItems.isEmpty()) {
+            QGraphicsItem * item = collidingItems[0];
+            emit shipDestroyed();
+            destroyShip(); // The ship was hit, so it has to be destroyed
 
-        // Check if it was a missile
-        Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
-        if (aMissile != NULL) {
-            // If a missile from the saucer hit the ship, destroy the ship
+            // Check if it was a missile
+            Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
+            if (aMissile != NULL) {
+                // If a missile from the saucer hit the ship, destroy the ship
 
-            // Is this required? I moved out the signal as else the signal was only emited if the ship is destroyed by a saucer
-            if (!aMissile->firedFromShip()) {
+                // Is this required? I moved out the signal as else the signal was only emited if the ship is destroyed by a saucer
+                if (!aMissile->firedFromShip()) {
+                }
+
+                // Destroy the missile
+                aMissile->destoyItem();
+                return;
             }
-
-            // Destroy the missile
-            aMissile->destoyItem();
-            return;
         }
     }
 }
@@ -164,6 +175,17 @@ void Ship::fireMissile() {
     newMissile->setPos(mapToParent(0, 1.05 * frontOffset));
     newMissile->setRotation(rotation());
     scene()->addItem(newMissile);
+}
+
+void Ship::flashEvent() {
+    if(effectiveOpacity() > 0) {
+        setOpacity(0);
+    } else {
+        setOpacity(1);
+    }
+
+    --flashes;
+    if (flashes < 1) { flash->stop(); flash->deleteLater();}
 }
 
 Ship::~Ship() {}

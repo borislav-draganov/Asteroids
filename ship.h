@@ -39,6 +39,7 @@ protected:
     ~Ship();
 
 private:
+    int flashes;                    // How many times the ship will flash
     qreal angle;                    // The angle used for rotation
     qreal speed;                    // The movement speed
     bool keyLeft;                   // Flag for the Left key
@@ -46,10 +47,14 @@ private:
     bool keyUP;                     // Flag for the thrust key
     QPixmap shipImage;              // The image of the ship
     QPointer<QLabel> gif_anim;      // The explosion effect .gif
+    QTimer *flash;                  // Timer for flashing the ship when it is created
 
 signals:
     void shipDestroyed();           // Tell the main window that a ship has been destroyed
     void explosionSound();          // Tell the main window to play the explosion sound effect
+
+private slots:
+    void flashEvent();              // Make the newly created ship flashing
 };
 
 #endif // SHIP_H
