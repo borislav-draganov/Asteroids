@@ -61,10 +61,10 @@ private:
     void saveCurGame(int);
     void parseSavesXML();
 
-    int score;
-    int level;
-    int lives;
-    int objectCounter;
+    int score; // Score counter
+    int level; // Levels counter
+    int lives; // Lives counter
+    int objectCounter; // Object counter. Object = any asteroid or saucer on the field. Used for checks if we have to start new level
     QPushButton * test;
     QPushButton * btnSave;
     QPushButton * btnContinue;

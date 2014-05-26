@@ -17,14 +17,22 @@
 #include <QSplashScreen>
 #include <QXmlStreamReader>
 
+// Define max levels
 #define maxLevels   10
 
+// Define maxSaves - using 11 instead of 10 for easier relation between saves (1 to 1 instead of 0 to 1)
+#define maxSaves    11
+
+
+// Define structure that will be used when creating new level to identify the number of asteroids and saucers to be spawned
 struct levelDef
 {
     int levelNum;
     int asteroidsNum;
     int saucerNum;
 };
+
+// Define the array used to spawn the saucers and asteroids
 
 levelDef levelDescr[maxLevels] = {
     { 1,  1, 0},
@@ -39,6 +47,8 @@ levelDef levelDescr[maxLevels] = {
     {10, 12, 3}
 };
 
+// Define structure that will be used to parse the saves.xml
+
 struct parsedXML
 {
     QString SSavename;
@@ -47,7 +57,9 @@ struct parsedXML
     int SLevel;
 };
 
-parsedXML xmlGames[11];
+// Define array that will hold the saves after we read them
+
+parsedXML xmlGames[maxSaves];
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -170,15 +182,17 @@ MainWindow::MainWindow(QWidget *parent) :
     laserEffect->setSource(QUrl::fromLocalFile(":FX/resource/laser.wav"));
     laserEffect->setVolume(0.5f);
 
+    // Call addButtons in order to add the buttons to the window
     addButtons();
 }
 
+// Function used to generate random values when required
 int MainWindow::randInt(int low, int high) {
     // Random number between low and high
     return qrand() % ((high + 1) - low) + low;
 }
 
-
+// Function that adds the ship to the game
 void MainWindow::addShip()
 {
     // Add the ship and set permanent focus on it
@@ -188,6 +202,8 @@ void MainWindow::addShip()
     connect(theShip, SIGNAL(shipDestroyed()), this, SLOT(updateLives()));
 }
 
+// Function used to create the new level
+// Adds the asteroids and saucers, call the addShip to add new ship
 void MainWindow::newLevel()
 {
     // Remove the old Ship if any
@@ -210,13 +226,13 @@ void MainWindow::newLevel()
         QPointer<Asteroid> aMediumAsteroid = new Asteroid(2, this);
         QPointer<Asteroid> aBigAsteroid = new Asteroid(3, this);
 
-        aSmallAsteroid->setPos(randInt(-200,200), randInt(-200,200));
+        aSmallAsteroid->setPos(randInt(-350,350), randInt(-350,350));
         scene->addItem(aSmallAsteroid);
 
-        aMediumAsteroid->setPos(randInt(-200,200), randInt(-200,200));
+        aMediumAsteroid->setPos(randInt(-350,350), randInt(-350,350));
         scene->addItem(aMediumAsteroid);
 
-        aBigAsteroid->setPos(randInt(-200,200), randInt(-200,200));
+        aBigAsteroid->setPos(randInt(-350,350), randInt(-350,350));
         scene->addItem(aBigAsteroid);
     }
 
@@ -225,15 +241,17 @@ void MainWindow::newLevel()
     int saucerTotal = levelDescr[level - 1].saucerNum;
     for(int i = 0; i < saucerTotal; i++) {
         QPointer<Saucer> aSmallSaucer = new Saucer(1, this);
-        aSmallSaucer->setPos(200, -200);
+        aSmallSaucer->setPos(randInt(-350,350), randInt(-350,350));
         scene->addItem(aSmallSaucer);
 
         QPointer<Saucer> aBigSaucer = new Saucer(2, this);
-        aBigSaucer->setPos(-200, -200);
+        aBigSaucer->setPos(randInt(-350,350), randInt(-350,350));
         scene->addItem(aBigSaucer);
     }
 }
 
+
+// Function called by clicking newGame - used to reset some counters (lives, level, score) and hide buttons
 void MainWindow::newGame()
 {
     setBtnVisibility(5);
@@ -250,7 +268,7 @@ void MainWindow::newGame()
     newLevel();
 }
 
-
+// Function called when a load game is selected. It will set lives, level and score counters to the once from the save and start new level from this point
 void MainWindow::loadGame(int loadGameID)
 {
     lives = xmlGames[loadGameID].SLives;
@@ -264,6 +282,9 @@ void MainWindow::loadGame(int loadGameID)
     newLevel();
 }
 
+
+// Function called when you click save game. Asks if you want to replace existing save.
+// If confirmation is received OR no save is replaced (using empty slot) the game is saved by calling saveCurGame() and we are returned back to Continue / Save options
 void MainWindow::saveGame(int saveGameSlotID)
 {
     int answer = 1;
@@ -290,7 +311,7 @@ void MainWindow::saveGame(int saveGameSlotID)
     }
 }
 
-
+// Function used to save the games to the file
 void MainWindow::saveCurGame(int saveGameSlotID){
 
     parseSavesXML();
@@ -368,6 +389,7 @@ void MainWindow::saveCurGame(int saveGameSlotID){
 
 }
 
+// Function that parses the saves.xml. Used for both load and save game display.
 void MainWindow::parseSavesXML()
 {
     QFile* file = new QFile("saves.xml");
@@ -459,6 +481,7 @@ void MainWindow::parseSavesXML()
 
 }
 
+// Function used to show the games that are possible for load. Locks buttons that have no saves on them.
 void MainWindow::showLoadGames()
 {
 
@@ -552,6 +575,7 @@ void MainWindow::showLoadGames()
 
 }
 
+// Function that shows the save game slots
 void MainWindow::showSavedGames()
 {
 
@@ -600,6 +624,7 @@ void MainWindow::showSavedGames()
     setBtnVisibility(4);
 }
 
+// Function continue - used to continue to next level
 void MainWindow::cntGame()
 {
     setBtnVisibility(5);
@@ -607,6 +632,7 @@ void MainWindow::cntGame()
     newLevel();
 }
 
+// Function used to update the score when an object is destroyed
 void MainWindow::updateScore(int size)
 {
     if      (size == 1) { score += 100; }
@@ -618,10 +644,12 @@ void MainWindow::updateScore(int size)
     labelCurScore -> setText(QString::number(score));
 }
 
+// Function that is used to set (reset) the objects counter.
 void MainWindow::setObjectCounter(int upd){
     objectCounter = upd;
 }
 
+// Function used to update the object counter. Also shows the proper menu if the objects get to 0
 void MainWindow::updateObjectCounter(int upd)
 {
     objectCounter+=upd;
@@ -631,11 +659,13 @@ void MainWindow::updateObjectCounter(int upd)
     }
 }
 
+// Function used to check the object counter value
 int MainWindow::checkObjectCounter()
 {
     return objectCounter;
 }
 
+// FUnction called when we have to change the value of the lives. Also checks if any are left and resets the ship if we still have lives.
 void MainWindow::updateLives()
 {
     // Lower the number of lives
@@ -657,6 +687,7 @@ void MainWindow::updateLives()
 
 }
 
+// Function called when changing the level
 void MainWindow::updateLevel()
 {
 
@@ -665,6 +696,8 @@ void MainWindow::updateLevel()
 }
 
 
+// Function that displays game over splash
+// IMPORTANT: WILL BE REPLACED!!!
 void MainWindow::displayGameOver()
 {
     QPixmap pixmap(":/GameOver/resource/GameOver.jpg");
@@ -673,11 +706,14 @@ void MainWindow::displayGameOver()
     qApp->processEvents();
 }
 
+
+// Function called when we have to play explosion sound
 void MainWindow::playExplosionSound()
 {
     explosionEffect->play();
 }
 
+// Function called when we have to play laser sound
 void MainWindow::playLaserSound()
 {
     laserEffect->play();
@@ -795,7 +831,7 @@ void MainWindow::setBtnVisibility(int temp)
     }
 }
 
-
+// Adding buttons to the window
 void MainWindow::addButtons()
 {
 
