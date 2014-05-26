@@ -43,8 +43,13 @@ public slots:
     int checkObjectCounter();
 
 private:
+
+    /* Initially used to add top menu to the window
+    !!!No longer needed!!!
     void createActions();
     void createMenus();
+    */
+
     void setObjectCounter(int);
     void newLevel();
     void addShip();
@@ -105,6 +110,9 @@ private:
     QLabel *labelCurScore;
     QLabel *labelCurLives;
     QLabel *labelCurLevel;
+
+    QLabel *labelEmptyPos1;
+    QLabel *labelEmptyPos2;
 
     QSoundEffect *explosionEffect;
     QSoundEffect *laserEffect;
