@@ -746,6 +746,7 @@ void MainWindow::setBtnVisibility(int temp)
         btnLoad8->setVisible(true);
         btnLoad9->setVisible(true);
         btnLoad10->setVisible(true);
+        btnLoadBack->setVisible(true);
     }
     else if(temp == 4)
     {
@@ -759,6 +760,7 @@ void MainWindow::setBtnVisibility(int temp)
         btnSave8->setVisible(true);
         btnSave9->setVisible(true);
         btnSave10->setVisible(true);
+        btnSaveBack->setVisible(true);
     }
     else
     {
@@ -777,6 +779,7 @@ void MainWindow::setBtnVisibility(int temp)
         btnSave8->setVisible(false);
         btnSave9->setVisible(false);
         btnSave10->setVisible(false);
+        btnSaveBack->setVisible(false);
 
         btnLoad1->setVisible(false);
         btnLoad2->setVisible(false);
@@ -788,6 +791,7 @@ void MainWindow::setBtnVisibility(int temp)
         btnLoad8->setVisible(false);
         btnLoad9->setVisible(false);
         btnLoad10->setVisible(false);
+        btnLoadBack->setVisible(false);
     }
 }
 
@@ -883,6 +887,14 @@ void MainWindow::addButtons()
     btnSave10->setVisible(false);
     connect(btnSave10, SIGNAL(released()), this, SLOT(pshdButton()));
 
+    btnSaveBack = new QPushButton(border);
+    btnSaveBack->setGeometry(QRect(275,580,301,40));
+    btnSaveBack->setText("BACK");
+    btnSaveBack->setVisible(false);
+    connect(btnSaveBack, SIGNAL(released()), this, SLOT(pshdButton()));
+
+
+
 
     // Load game buttons
 
@@ -946,6 +958,11 @@ void MainWindow::addButtons()
     btnLoad10->setVisible(false);
     connect(btnLoad10, SIGNAL(released()), this, SLOT(pshdButton()));
 
+    btnLoadBack = new QPushButton(border);
+    btnLoadBack->setGeometry(QRect(275,580,301,40));
+    btnLoadBack->setText("BACK");
+    btnLoadBack->setVisible(false);
+    connect(btnLoadBack, SIGNAL(released()), this, SLOT(pshdButton()));
 }
 
 // We will use this slot as the QT buttons do not support buttonID
@@ -993,6 +1010,11 @@ void MainWindow::pshdButton()
     {
         saveGame(10);
     }
+    else if(btnSaveBack == clckedButton)
+    {
+        setBtnVisibility(5);
+        setBtnVisibility(1);
+    }
     else if(btnLoad1 == clckedButton)
     {
         loadGame(1);
@@ -1032,6 +1054,11 @@ void MainWindow::pshdButton()
     else if(btnLoad10 == clckedButton)
     {
         loadGame(10);
+    }
+    else if(btnLoadBack == clckedButton)
+    {
+        setBtnVisibility(5);
+        setBtnVisibility(2);
     }
 
 }

@@ -82,6 +82,7 @@ private:
     QPushButton * btnSave8;
     QPushButton * btnSave9;
     QPushButton * btnSave10;
+    QPushButton * btnSaveBack;
 
     QPushButton * btnLoad1;
     QPushButton * btnLoad2;
@@ -93,6 +94,7 @@ private:
     QPushButton * btnLoad8;
     QPushButton * btnLoad9;
     QPushButton * btnLoad10;
+    QPushButton * btnLoadBack;
 
     QMenu *GameMenu;
     QAction *newGameAct;
