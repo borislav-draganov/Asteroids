@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     // Set main window fixed size
-    this->setFixedSize(850,880);
+    this->setFixedSize(850,900);
 
     // Create widget to use for CentralWidget in the window
     border = new QWidget( this );
@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create Vertical Box Layout where we will place the scene and the labels
     borderLayout = new QVBoxLayout( border );
     borderLayout->addStretch( 1 );
+
 
 
     // Create Horizontal Boz layout where we will place the labels for score, level, etc
@@ -141,6 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     scene->setSceneRect(-400, -400, 800, 800);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
+
     // Set random background for the scene
 
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
@@ -151,6 +153,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create QGraphicsView that will be nested as CentralWidget in the MainWindow
 
     view = new QGraphicsView(scene);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scene->setStickyFocus(true);
     borderLayout->addWidget( view);
     borderLayout->addStretch( 1 );
@@ -163,7 +167,6 @@ MainWindow::MainWindow(QWidget *parent) :
     createMenus();
 
     */
-
 
     // Set window title
     setWindowTitle(tr("Asteroids"));
@@ -346,7 +349,7 @@ void MainWindow::saveCurGame(int saveGameSlotID){
                 xmlGames[i].SSavename = savename;
                 xmlGames[i].SScore = score;
                 xmlGames[i].SLives = lives;
-                xmlGames[i].SLevel = level;
+                xmlGames[i].SLevel = level++; // Add 1 to current level so the game will start from next level as the current one is finished!
             }
         }
         // Write <save id= ? >
@@ -668,10 +671,6 @@ int MainWindow::checkObjectCounter()
 // FUnction called when we have to change the value of the lives. Also checks if any are left and resets the ship if we still have lives.
 void MainWindow::updateLives()
 {
-    // Lower the number of lives
-    lives--;
-    labelCurLives -> setText(QString::number(lives));
-
 
     // Check if any lives are left - if yes, add new ship
     if(lives>0)
@@ -685,6 +684,9 @@ void MainWindow::updateLives()
         displayGameOver();
     }
 
+    // Lower the number of lives
+    lives--;
+    labelCurLives -> setText(QString::number(lives));
 }
 
 // Function called when changing the level
@@ -831,7 +833,7 @@ void MainWindow::setBtnVisibility(int temp)
     }
 }
 
-// Adding buttons to the window
+// Adding buttons to the window. All are set to hidden.
 void MainWindow::addButtons()
 {
 
