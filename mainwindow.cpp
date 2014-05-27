@@ -166,7 +166,14 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createMenus();
 
-    */
+
+
+    QWidget * sceneTop = new QWidget( border );
+    sceneTop -> lower();
+    QPushButton * btnTest = new QPushButton(sceneTop);
+    btnTest->setText("TEST");
+    btnTest->setVisible(true);
+*/
 
     // Set window title
     setWindowTitle(tr("Asteroids"));
@@ -676,6 +683,9 @@ void MainWindow::updateLives()
     if(lives>0)
     {
         addShip();
+        // Lower the number of lives
+        lives--;
+        labelCurLives -> setText(QString::number(lives));
     }
     // If no more lives left display "Game Over"
     else
@@ -683,10 +693,6 @@ void MainWindow::updateLives()
         setBtnVisibility(2);
         displayGameOver();
     }
-
-    // Lower the number of lives
-    lives--;
-    labelCurLives -> setText(QString::number(lives));
 }
 
 // Function called when changing the level
