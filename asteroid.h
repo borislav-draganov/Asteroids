@@ -47,7 +47,7 @@ private:
 signals:
      void asteroidKilled(int size); // Tell the main window an asteroid's been killed by the player
      void explosionSound();         // Tell the main window to play the explosion sound effect
-     void updateObjectCountOnKill(int upd); // Tell the main window to update the object count that is used for level change
+     void updateObjectCount(int upd); // Tell the main window to update the object count that is used for level change
 };
 
 #endif // ASTEROID_H

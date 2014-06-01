@@ -16,10 +16,9 @@ Asteroid::Asteroid(int size, QObject *parent) : QObject(parent) {
     cornerShapeOffset = size;
     lengthShapeOffset = size * 2;
 
-    // Set the speed
+    // Set the moving direction
     m_dx = qrand()%2 + 1;
     m_dy = qrand()%2 + 1;
-    setRotation(qrand() % (360 * 16));
 
     // Set the random rotation
     int maxRotation = 2;
@@ -40,10 +39,10 @@ Asteroid::Asteroid(int size, QObject *parent) : QObject(parent) {
     connect(this, SIGNAL(asteroidKilled(int)), parent, SLOT(updateScore(int)));
 
     // Connect to the slot that updates the object counter
-    connect(this, SIGNAL(updateObjectCountOnKill(int)), parent, SLOT(updateObjectCounter(int)));
+    connect(this, SIGNAL(updateObjectCount(int)), parent, SLOT(updateObjectCounter(int)));
 
     // Update the object counter: +1 as we spawn the asteroid
-    emit updateObjectCountOnKill(1);
+    emit updateObjectCount(1);
 
     // Nullify the pointer for the explosion .gif
     gif_anim = 0;
@@ -68,10 +67,6 @@ void Asteroid::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     // Print the asteroid image
     painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing);
     painter->drawPixmap(boundingRect().x(), boundingRect().y(), boundingRect().width(), boundingRect().height(), img);
-
-    // Print the actual shape
-    //painter->setPen(QPen(Qt::red));
-    //painter->drawPath(shape());
 }
 
 // Move the asteroid
@@ -128,8 +123,6 @@ void Asteroid::advance(int step){
 // Destroy the asteroid and brake it down to smaller one if possible
 void Asteroid::destoyItem()
 {
-
-
     // Use the current coordinates
     double thisX = x();
     double thisY = y();
@@ -180,7 +173,7 @@ void Asteroid::destoyItem()
     scene()->removeItem(this);
 
     // Update the object counter: -1 as we will remove the asteroid
-    emit updateObjectCountOnKill(-1);
+    emit updateObjectCount(-1);
 }
 
 Asteroid::~Asteroid()
