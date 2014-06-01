@@ -119,8 +119,8 @@ void topScoreWin::readTopScores()
     {
         for(int i = counter; i < maxTopScores; i++)
         {
-            topScores[i].name = "EmptyEmptyEmp"; // Set as empty
-            topScores[i].score = 99999999; // Set as 0
+            topScores[i].name = "Empty"; // Set as empty
+            topScores[i].score = 0; // Set as 0
         }
     }
 

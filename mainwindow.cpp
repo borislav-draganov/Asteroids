@@ -17,6 +17,35 @@
 #include <QSplashScreen>
 #include <QXmlStreamReader>
 
+// Define main window size
+#define mwWidth 800
+#define mwHeight 600
+
+// Define horizontal bar size
+#define hbWidth 780
+#define hbHeight 40
+
+// Define scene size
+#define scWidth 750
+#define scHeight 500
+
+// Set standard button size
+#define butWidth 200
+#define butHeight 40
+// Setting standard buttons offset to their height + 10 so they do not touch each other
+#define standardButtonsOffset butHeight + 10
+
+
+// Set save / load buttons size
+#define btnSLWidth 300
+#define btnSLHeight 40
+
+// Set first save / load buttons vertical position
+#define btnSLVPos 120
+// Setting load / save buttons offset
+#define btnSaveLoadOffset 38
+
+
 // Define max levels
 #define maxLevels   10
 
@@ -68,7 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     // Set main window fixed size
-    this->setFixedSize(850,900);
+    this->setFixedSize(mwWidth,mwHeight);
 
     // Create widget to use for CentralWidget in the window
     border = new QWidget( this );
@@ -81,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Create Horizontal Boz layout where we will place the labels for score, level, etc
     topWin = new QWidget( border );
-    topWin->setFixedSize(830, 40);
+    topWin->setFixedSize(hbWidth, hbHeight);
     horizontalBox = new QHBoxLayout ( topWin );
 
     // set initial lives, scores and level
@@ -139,7 +168,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Create scene
     scene = new QGraphicsScene( border );
-    scene->setSceneRect(-400, -400, 800, 800);
+
+    // Set scene coordinates
+    // We need the center of the scene to be 0,0 so we set the top left corner to be (-scWidth/2, -scHeight/2)
+    scene->setSceneRect(-scWidth/2, -scHeight/2, scWidth, scHeight);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
 
@@ -235,13 +267,17 @@ void MainWindow::newLevel()
         QPointer<Asteroid> aMediumAsteroid = new Asteroid(2, this);
         QPointer<Asteroid> aBigAsteroid = new Asteroid(3, this);
 
-        aSmallAsteroid->setPos(randInt(-350,350), randInt(-350,350));
+        // Possible asteroids coordinates for start are always 50 points away from the borders of the scene
+        int margin = 50;
+        int astCoordX = scWidth/2 - margin;
+        int astCoordY = scHeight/2 - margin;
+        aSmallAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
         scene->addItem(aSmallAsteroid);
 
-        aMediumAsteroid->setPos(randInt(-350,350), randInt(-350,350));
+        aMediumAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
         scene->addItem(aMediumAsteroid);
 
-        aBigAsteroid->setPos(randInt(-350,350), randInt(-350,350));
+        aBigAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
         scene->addItem(aBigAsteroid);
     }
 
@@ -249,12 +285,16 @@ void MainWindow::newLevel()
     // Add the saucers according to the level, substracting 1 from the level because we start from 0 in the array
     int saucerTotal = levelDescr[level - 1].saucerNum;
     for(int i = 0; i < saucerTotal; i++) {
+        // Possible asteroids coordinates for start are always 50 points away from the borders of the scene
+        int margin = 50;
+        int saucerCoordX = scWidth/2 - margin;;
+        int saucerCoordY = scHeight/2 - margin;;
         QPointer<Saucer> aSmallSaucer = new Saucer(1, this);
-        aSmallSaucer->setPos(randInt(-350,350), randInt(-350,350));
+        aSmallSaucer->setPos(randInt(-saucerCoordX,saucerCoordX), randInt(-saucerCoordY,saucerCoordY));
         scene->addItem(aSmallSaucer);
 
         QPointer<Saucer> aBigSaucer = new Saucer(2, this);
-        aBigSaucer->setPos(randInt(-350,350), randInt(-350,350));
+        aBigSaucer->setPos(randInt(-saucerCoordX,saucerCoordX), randInt(-saucerCoordY,saucerCoordY));
         scene->addItem(aBigSaucer);
     }
 }
@@ -1001,102 +1041,113 @@ void MainWindow::setBtnVisibility(int temp)
 void MainWindow::addButtons()
 {
 
+
     // Standard buttons
 
+    // Highest placed standard button will be above the middle of the window
+    int firstStandardButtonVPos = mwHeight/2 - ((standardButtonsOffset)*1.5) ;
+
+    // Standard buttons top left X axis starts on same point
+    int standardButtonHPos = (mwWidth-butWidth)/2;
+
+
     btnSave = new QPushButton(border);
-    btnSave->setGeometry(QRect(325,330,201,40));
+    btnSave->setGeometry(QRect(standardButtonHPos,firstStandardButtonVPos,butWidth,butHeight));
     btnSave->setText("SAVE GAME");
     btnSave->setVisible(false);
     connect(btnSave, SIGNAL(released()), this, SLOT(showSavedGames()));
 
     btnContinue = new QPushButton(border);
-    btnContinue->setGeometry(QRect(325,380,201,40));
+    btnContinue->setGeometry(QRect(standardButtonHPos,firstStandardButtonVPos+standardButtonsOffset,butWidth,butHeight));
     btnContinue->setText("CONTINUE");
     btnContinue->setVisible(false);
     connect(btnContinue, SIGNAL(released()), this, SLOT(cntGame()));
 
     btnStart = new QPushButton(border);
-    btnStart->setGeometry(QRect(325,330,201,40));
+    btnStart->setGeometry(QRect(standardButtonHPos,firstStandardButtonVPos,butWidth,butHeight));
     btnStart->setText("START NEW GAME");
     btnStart->setVisible(true);
     connect(btnStart, SIGNAL(released()), this, SLOT(newGame()));
 
     btnLoad = new QPushButton(border);
-    btnLoad->setGeometry(QRect(325,380,201,40));
+    btnLoad->setGeometry(QRect(standardButtonHPos,firstStandardButtonVPos+standardButtonsOffset,butWidth,butHeight));
     btnLoad->setText("LOAD SAVED GAME");
     btnLoad->setVisible(true);
     connect(btnLoad, SIGNAL(released()), this, SLOT(showLoadGames()));
 
     btnTopScore = new QPushButton(border);
-    btnTopScore->setGeometry(QRect(325,430,201,40));
+    btnTopScore->setGeometry(QRect(standardButtonHPos,firstStandardButtonVPos+(standardButtonsOffset)*2,butWidth,butHeight));
     btnTopScore->setText("TOP SCORES");
     btnTopScore->setVisible(true);
     connect(btnTopScore, SIGNAL(released()), this, SLOT(pshdButton()));
 
+    // Calculating save / load buttons horizontal position
+    int saveLoadButtonsHPos = (mwWidth-btnSLWidth)/2;
+
     // Save game buttons
 
     btnSave1 = new QPushButton(border);
-    btnSave1->setGeometry(QRect(275,200,301,40));
+    btnSave1->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos,btnSLWidth,btnSLHeight));
     btnSave1->setText("SAVE GAME 1");
     btnSave1->setVisible(false);
     connect(btnSave1, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave2 = new QPushButton(border);
-    btnSave2->setGeometry(QRect(275,238,301,40));
+    btnSave2->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset,btnSLWidth,btnSLHeight));
     btnSave2->setText("SAVE GAME 2");
     btnSave2->setVisible(false);
     connect(btnSave2, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave3 = new QPushButton(border);
-    btnSave3->setGeometry(QRect(275,276,301,40));
+    btnSave3->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*2,btnSLWidth,btnSLHeight));
     btnSave3->setText("SAVE GAME 3");
     btnSave3->setVisible(false);
     connect(btnSave3, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave4 = new QPushButton(border);
-    btnSave4->setGeometry(QRect(275,314,301,40));
+    btnSave4->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*3,btnSLWidth,btnSLHeight));
     btnSave4->setText("SAVE GAME 4");
     btnSave4->setVisible(false);
     connect(btnSave4, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave5 = new QPushButton(border);
-    btnSave5->setGeometry(QRect(275,352,301,40));
+    btnSave5->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*4,btnSLWidth,btnSLHeight));
     btnSave5->setText("SAVE GAME 5");
     btnSave5->setVisible(false);
     connect(btnSave5, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave6 = new QPushButton(border);
-    btnSave6->setGeometry(QRect(275,390,301,40));
+    btnSave6->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*5,btnSLWidth,btnSLHeight));
     btnSave6->setText("SAVE GAME 6");
     btnSave6->setVisible(false);
     connect(btnSave6, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave7 = new QPushButton(border);
-    btnSave7->setGeometry(QRect(275,428,301,40));
+    btnSave7->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*6,btnSLWidth,btnSLHeight));
     btnSave7->setText("SAVE GAME 7");
     btnSave7->setVisible(false);
     connect(btnSave7, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave8 = new QPushButton(border);
-    btnSave8->setGeometry(QRect(275,466,301,40));
+    btnSave8->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*7,btnSLWidth,btnSLHeight));
     btnSave8->setText("SAVE GAME 8");
     btnSave8->setVisible(false);
     connect(btnSave8, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave9 = new QPushButton(border);
-    btnSave9->setGeometry(QRect(275,504,301,40));
+    btnSave9->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*8,btnSLWidth,btnSLHeight));
     btnSave9->setText("SAVE GAME 9");
     btnSave9->setVisible(false);
     connect(btnSave9, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSave10 = new QPushButton(border);
-    btnSave10->setGeometry(QRect(275,542,301,40));
+    btnSave10->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*9,btnSLWidth,btnSLHeight));
     btnSave10->setText("SAVE GAME 10");
     btnSave10->setVisible(false);
     connect(btnSave10, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnSaveBack = new QPushButton(border);
-    btnSaveBack->setGeometry(QRect(275,580,301,40));
+    btnSaveBack->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*10,btnSLWidth,btnSLHeight));
     btnSaveBack->setText("BACK");
     btnSaveBack->setVisible(false);
     connect(btnSaveBack, SIGNAL(released()), this, SLOT(pshdButton()));
@@ -1107,67 +1158,67 @@ void MainWindow::addButtons()
     // Load game buttons
 
     btnLoad1 = new QPushButton(border);
-    btnLoad1->setGeometry(QRect(275,200,301,40));
+    btnLoad1->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos,btnSLWidth,btnSLHeight));
     btnLoad1->setText("LOAD GAME 1");
     btnLoad1->setVisible(false);
     connect(btnLoad1, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad2 = new QPushButton(border);
-    btnLoad2->setGeometry(QRect(275,238,301,40));
+    btnLoad2->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset,btnSLWidth,btnSLHeight));
     btnLoad2->setText("LOAD GAME 2");
     btnLoad2->setVisible(false);
     connect(btnLoad2, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad3 = new QPushButton(border);
-    btnLoad3->setGeometry(QRect(275,276,301,40));
+    btnLoad3->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*2,btnSLWidth,btnSLHeight));
     btnLoad3->setText("LOAD GAME 3");
     btnLoad3->setVisible(false);
     connect(btnLoad3, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad4 = new QPushButton(border);
-    btnLoad4->setGeometry(QRect(275,314,301,40));
+    btnLoad4->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*3,btnSLWidth,btnSLHeight));
     btnLoad4->setText("LOAD GAME 4");
     btnLoad4->setVisible(false);
     connect(btnLoad4, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad5 = new QPushButton(border);
-    btnLoad5->setGeometry(QRect(275,352,301,40));
+    btnLoad5->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*4,btnSLWidth,btnSLHeight));
     btnLoad5->setText("LOAD GAME 5");
     btnLoad5->setVisible(false);
     connect(btnLoad5, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad6 = new QPushButton(border);
-    btnLoad6->setGeometry(QRect(275,390,301,40));
+    btnLoad6->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*5,btnSLWidth,btnSLHeight));
     btnLoad6->setText("LOAD GAME 6");
     btnLoad6->setVisible(false);
     connect(btnLoad6, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad7 = new QPushButton(border);
-    btnLoad7->setGeometry(QRect(275,428,301,40));
+    btnLoad7->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*6,btnSLWidth,btnSLHeight));
     btnLoad7->setText("LOAD GAME 7");
     btnLoad7->setVisible(false);
     connect(btnLoad7, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad8 = new QPushButton(border);
-    btnLoad8->setGeometry(QRect(275,466,301,40));
+    btnLoad8->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*7,btnSLWidth,btnSLHeight));
     btnLoad8->setText("LOAD GAME 8");
     btnLoad8->setVisible(false);
     connect(btnLoad8, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad9 = new QPushButton(border);
-    btnLoad9->setGeometry(QRect(275,504,301,40));
+    btnLoad9->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*8,btnSLWidth,btnSLHeight));
     btnLoad9->setText("LOAD GAME 9");
     btnLoad9->setVisible(false);
     connect(btnLoad9, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoad10 = new QPushButton(border);
-    btnLoad10->setGeometry(QRect(275,542,301,40));
+    btnLoad10->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*9,btnSLWidth,btnSLHeight));
     btnLoad10->setText("LOAD GAME 10");
     btnLoad10->setVisible(false);
     connect(btnLoad10, SIGNAL(released()), this, SLOT(pshdButton()));
 
     btnLoadBack = new QPushButton(border);
-    btnLoadBack->setGeometry(QRect(275,580,301,40));
+    btnLoadBack->setGeometry(QRect(saveLoadButtonsHPos,btnSLVPos+btnSaveLoadOffset*10,btnSLWidth,btnSLHeight));
     btnLoadBack->setText("BACK");
     btnLoadBack->setVisible(false);
     connect(btnLoadBack, SIGNAL(released()), this, SLOT(pshdButton()));
