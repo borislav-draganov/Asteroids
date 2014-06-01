@@ -759,7 +759,11 @@ bool MainWindow::checkForTopScore()
     // Try to open the file for reading
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 <<<<<<< HEAD
+<<<<<<< HEAD
               file.open(QIODevice::ReadOnly | QIODevice::Text);
+=======
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+>>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
 =======
         file.open(QIODevice::ReadWrite | QIODevice::Text);
 >>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
@@ -859,6 +863,9 @@ void MainWindow::updateTopScores()
 =======
             // Append the line
             outStream << line << "\n";
+<<<<<<< HEAD
+>>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
+=======
 >>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
 
             // Close the file
