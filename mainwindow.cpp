@@ -23,6 +23,8 @@
 // Define maxSaves - using 11 instead of 10 for easier relation between saves (1 to 1 instead of 0 to 1)
 #define maxSaves    11
 
+// Set the number of top scores
+#define maxTopScores 10
 
 // Define structure that will be used when creating new level to identify the number of asteroids and saucers to be spawned
 struct levelDef
@@ -77,10 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
     borderLayout = new QVBoxLayout( border );
     borderLayout->addStretch( 1 );
 
-
-
     // Create Horizontal Boz layout where we will place the labels for score, level, etc
-    QWidget *topWin = new QWidget( border );
+    topWin = new QWidget( border );
     topWin->setFixedSize(830, 40);
     horizontalBox = new QHBoxLayout ( topWin );
 
@@ -156,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scene->setStickyFocus(true);
-    borderLayout->addWidget( view);
+    borderLayout->addWidget(view);
     borderLayout->addStretch( 1 );
 
     /* Initially used to add top menu to the window
@@ -165,15 +165,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create the menus
     createActions();
     createMenus();
+    */
 
+    // Create pointer for the Top Score window
+    topScore = new topScoreWin(this);
 
+    //borderLayout->addWidget(test);
 
-    QWidget * sceneTop = new QWidget( border );
-    sceneTop -> lower();
-    QPushButton * btnTest = new QPushButton(sceneTop);
-    btnTest->setText("TEST");
-    btnTest->setVisible(true);
-*/
 
     // Set window title
     setWindowTitle(tr("Asteroids"));
@@ -194,6 +192,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Call addButtons in order to add the buttons to the window
     addButtons();
+
 }
 
 // Function used to generate random values when required
@@ -356,7 +355,7 @@ void MainWindow::saveCurGame(int saveGameSlotID){
                 xmlGames[i].SSavename = savename;
                 xmlGames[i].SScore = score;
                 xmlGames[i].SLives = lives;
-                xmlGames[i].SLevel = level++; // Add 1 to current level so the game will start from next level as the current one is finished!
+                xmlGames[i].SLevel = ++level; // Add 1 to current level so the game will start from next level as the current one is finished!
             }
         }
         // Write <save id= ? >
@@ -503,7 +502,7 @@ void MainWindow::showLoadGames()
     QString tempText;
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[1].SScore).arg(xmlGames[1].SLives).arg(xmlGames[1].SSavename).arg(xmlGames[1].SLevel);
     btnLoad1->setText(tempText);
-    if(xmlGames[1].SLives == 0)
+    if(xmlGames[1].SScore == 0)
     {
         btnLoad1->setEnabled(false);
     }
@@ -511,7 +510,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[2].SScore).arg(xmlGames[2].SLives).arg(xmlGames[2].SSavename).arg(xmlGames[2].SLevel);
     btnLoad2->setText(tempText);
-    if(xmlGames[2].SLives == 0)
+    if(xmlGames[2].SScore == 0)
     {
         btnLoad2->setEnabled(false);
     }
@@ -519,7 +518,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[3].SScore).arg(xmlGames[3].SLives).arg(xmlGames[3].SSavename).arg(xmlGames[3].SLevel);
     btnLoad3->setText(tempText);
-    if(xmlGames[3].SLives == 0)
+    if(xmlGames[3].SScore == 0)
     {
         btnLoad3->setEnabled(false);
     }
@@ -527,7 +526,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[4].SScore).arg(xmlGames[4].SLives).arg(xmlGames[4].SSavename).arg(xmlGames[4].SLevel);
     btnLoad4->setText(tempText);
-    if(xmlGames[4].SLives == 0)
+    if(xmlGames[4].SScore == 0)
     {
         btnLoad4->setEnabled(false);
     }
@@ -535,7 +534,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[5].SScore).arg(xmlGames[5].SLives).arg(xmlGames[5].SSavename).arg(xmlGames[5].SLevel);
     btnLoad5->setText(tempText);
-    if(xmlGames[5].SLives == 0)
+    if(xmlGames[5].SScore == 0)
     {
         btnLoad5->setEnabled(false);
     }
@@ -543,7 +542,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[6].SScore).arg(xmlGames[6].SLives).arg(xmlGames[6].SSavename).arg(xmlGames[6].SLevel);
     btnLoad6->setText(tempText);
-    if(xmlGames[6].SLives == 0)
+    if(xmlGames[6].SScore == 0)
     {
         btnLoad6->setEnabled(false);
     }
@@ -551,7 +550,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[7].SScore).arg(xmlGames[7].SLives).arg(xmlGames[7].SSavename).arg(xmlGames[7].SLevel);
     btnLoad7->setText(tempText);
-    if(xmlGames[7].SLives == 0)
+    if(xmlGames[7].SScore == 0)
     {
         btnLoad7->setEnabled(false);
     }
@@ -559,7 +558,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[8].SScore).arg(xmlGames[8].SLives).arg(xmlGames[8].SSavename).arg(xmlGames[8].SLevel);
     btnLoad8->setText(tempText);
-    if(xmlGames[8].SLives == 0)
+    if(xmlGames[8].SScore == 0)
     {
         btnLoad8->setEnabled(false);
     }
@@ -567,7 +566,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[9].SScore).arg(xmlGames[9].SLives).arg(xmlGames[9].SSavename).arg(xmlGames[9].SLevel);
     btnLoad9->setText(tempText);
-    if(xmlGames[9].SLives == 0)
+    if(xmlGames[9].SScore == 0)
     {
         btnLoad9->setEnabled(false);
     }
@@ -575,7 +574,7 @@ void MainWindow::showLoadGames()
 
     tempText = QString("NAME: %3  SCORE: %1  LIVES: %2 LEVEL: %4").arg(xmlGames[10].SScore).arg(xmlGames[10].SLives).arg(xmlGames[10].SSavename).arg(xmlGames[10].SLevel);
     btnLoad10->setText(tempText);
-    if(xmlGames[10].SLives == 0)
+    if(xmlGames[10].SScore == 0)
     {
         btnLoad10->setEnabled(false);
     }
@@ -687,11 +686,168 @@ void MainWindow::updateLives()
         lives--;
         labelCurLives -> setText(QString::number(lives));
     }
-    // If no more lives left display "Game Over"
+    // If no more lives left display check the scores
+    // If the game have result that goes for top Score then ask for name, save it and display top scores
+    // If the game have result that does not affect the top score table display "Game Over"
     else
     {
-        setBtnVisibility(2);
-        displayGameOver();
+        if(checkForTopScore())
+        {
+            updateTopScores();
+            topScore->updateLabels();
+            topScore->show();
+            setBtnVisibility(2);
+
+        }
+        else
+        {
+            setBtnVisibility(2);
+            displayGameOver();
+        }
+    }
+}
+
+// Check if result is clasified for top-score
+
+bool MainWindow::checkForTopScore()
+{
+
+    bool result = false;
+    // Set which file we will open
+    QFile file("topscore.txt");
+
+    // Try to open the file for reading
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+             return false;
+
+    // Reading the file:
+    // Either read until end or read until 10 rows
+    int counter = 0;
+    while (!file.atEnd() and counter < maxTopScores) {
+        // Read line
+        QString line = file.readLine();
+
+        // Process line
+        // We need to have Name (w/o spaces) and Scores on this line. They must be delimited by space
+
+        // Setting delimiter - will be empty space
+        QString delimiterPattern(" ");
+
+        // Splitting the string
+        QStringList splitLine = line.split(delimiterPattern);
+
+        // We need the second element of the split
+        if(splitLine[1].toInt()<score)
+        {
+            result = true;
+        }
+
+        // Raise the counter
+        counter++;
+    }
+
+    file.close();
+
+    // We might still have empty slots in the top scores file. Check the counter
+
+    if(counter < maxTopScores)
+    {
+        result = true;
+    }
+
+    return result;
+
+}
+
+void MainWindow::updateTopScores()
+{
+    bool ok;
+    QString topScoreName = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                                      tr("Name:"), QLineEdit::Normal,
+                                                      QDir::home().dirName(), &ok);
+
+    if(ok)
+    {
+        // First we will read whole file, split the lines, then find the correct line that we want to replace or append
+        // Second we write the file again
+
+        // Set which file we will open
+        QFile file("topscore.txt");
+
+        // Try to open the file
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                 return;
+
+
+        // Read whole file
+        QString allFile = file.readAll();
+
+        // Close file
+        file.close();
+
+        // Setting delimiter - will be new line
+        QString delimiterPatternNewLine("\n");
+
+        // Splitting the file
+        QStringList splitLine = allFile.split(delimiterPatternNewLine);
+
+        // Check if we want to replace line or append (this is in case we still have empty top score slots)
+        if(splitLine.size() < maxTopScores)
+        {
+            QString line = topScoreName + " " + QString::number(score);
+
+            // Open file for append
+
+            if (!file.open(QIODevice::Append | QIODevice::Text))
+                     return;
+
+
+            QTextStream outStream(&file);
+            // Append the line
+            outStream << "\n" << line;
+
+            // Close the file
+            file.close();
+        }
+        // Else we run trough the list and find the line we want to replace
+        else{
+            for(int i = 0; i < maxTopScores; i++)
+            {
+                // We have to split the lines to check the top score
+                QString delimiterPattern(" ");
+                QStringList lineContent = splitLine[i].split(delimiterPattern);
+
+                // Check if line top score is below the current score
+                // If not - let the loop continue
+                if(lineContent[1].toInt() < score)
+                {
+                    QString line = topScoreName + " " + QString::number(score);
+                    splitLine.insert(i,line);
+                    break;
+                }
+            }
+
+            // Re-write the file
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+                     return;
+            QTextStream outStream(&file);
+            for(int i = 0; i < maxTopScores; i++)
+            {
+                QString outline;
+                if(i == maxTopScores - 1)
+                {
+                    outline = splitLine[i];
+                }
+                else
+                {
+                    outline = splitLine[i]+"\n";
+                }
+                outStream << outline;
+            }
+
+            file.close();
+
+        }
     }
 }
 
@@ -777,6 +933,7 @@ void MainWindow::setBtnVisibility(int temp)
     {
         btnStart->setVisible(true);
         btnLoad->setVisible(true);
+        btnTopScore->setVisible(true);
     }
     else if(temp == 3)
     {
@@ -810,6 +967,7 @@ void MainWindow::setBtnVisibility(int temp)
     {
         btnSave->setVisible(false);
         btnStart->setVisible(false);
+        btnTopScore->setVisible(false);
         btnContinue->setVisible(false);
         btnLoad->setVisible(false);
 
@@ -868,6 +1026,12 @@ void MainWindow::addButtons()
     btnLoad->setText("LOAD SAVED GAME");
     btnLoad->setVisible(true);
     connect(btnLoad, SIGNAL(released()), this, SLOT(showLoadGames()));
+
+    btnTopScore = new QPushButton(border);
+    btnTopScore->setGeometry(QRect(325,430,201,40));
+    btnTopScore->setText("TOP SCORES");
+    btnTopScore->setVisible(true);
+    connect(btnTopScore, SIGNAL(released()), this, SLOT(pshdButton()));
 
     // Save game buttons
 
@@ -1103,6 +1267,11 @@ void MainWindow::pshdButton()
     {
         setBtnVisibility(5);
         setBtnVisibility(2);
+    }
+    else if(btnTopScore == clckedButton)
+    {
+        topScore->updateLabels();
+        topScore->show();
     }
 
 }

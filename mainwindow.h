@@ -8,6 +8,7 @@
 #include <QmdiArea>
 #include <QLayout>
 #include <QPoint>
+#include <topscorewin.h>
 
 class QAction;
 class QActionGroup;
@@ -61,6 +62,9 @@ private:
     void saveCurGame(int);
     void parseSavesXML();
 
+    bool checkForTopScore();
+    void updateTopScores();
+
     int score; // Score counter
     int level; // Levels counter
     int lives; // Lives counter
@@ -70,6 +74,7 @@ private:
     QPushButton * btnContinue;
     QPushButton * btnStart;
     QPushButton * btnLoad;
+    QPushButton * btnTopScore;
 
 
     QPushButton * btnSave1;
@@ -96,6 +101,8 @@ private:
     QPushButton * btnLoad10;
     QPushButton * btnLoadBack;
 
+    QWidget * topWin;
+    topScoreWin * topScore;
     QMenu *GameMenu;
     QAction *newGameAct;
     QAction *loadGameAct;
@@ -106,6 +113,7 @@ private:
     QVBoxLayout *borderLayout;
     QHBoxLayout *horizontalBox;
 
+
     QLabel *labelScore;
     QLabel *labelLives;
     QLabel *labelLevel;
@@ -115,6 +123,7 @@ private:
 
     QLabel *labelEmptyPos1;
     QLabel *labelEmptyPos2;
+
 
     QSoundEffect *explosionEffect;
     QSoundEffect *laserEffect;

@@ -17,14 +17,16 @@ SOURCES += main.cpp \
     ship.cpp \
     saucer.cpp \
     missile.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    topscorewin.cpp
 
 HEADERS  += \
     asteroid.h \
     ship.h \
     saucer.h \
     missile.h \
-    mainwindow.h
+    mainwindow.h \
+    topscorewin.h
 
 OTHER_FILES +=
 
