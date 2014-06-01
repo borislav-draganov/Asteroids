@@ -68,11 +68,11 @@ struct levelDef
 levelDef levelDescr[maxLevels] = {
     { 1,  1, 0},
     { 2,  2, 1},
-    { 3,  5, 1},
-    { 4,  6, 2},
-    { 5,  7, 2},
-    { 6,  8, 2},
-    { 7,  9, 2},
+    { 3,  3, 1},
+    { 4,  4, 2},
+    { 5,  5, 2},
+    { 6,  6, 2},
+    { 7,  7, 2},
     { 8, 10, 3},
     { 9, 11, 3},
     {10, 12, 3}
@@ -263,19 +263,19 @@ void MainWindow::newLevel()
     // Add asteroids according to the level, substracting 1 from the level because we start from 0 in the array
     int astTotal = levelDescr[level - 1].asteroidsNum;
     for(int i = 0; i < astTotal; i++) {
-        QPointer<Asteroid> aSmallAsteroid = new Asteroid(1, this);
-        QPointer<Asteroid> aMediumAsteroid = new Asteroid(2, this);
+        //QPointer<Asteroid> aSmallAsteroid = new Asteroid(1, this);
+        //QPointer<Asteroid> aMediumAsteroid = new Asteroid(2, this);
         QPointer<Asteroid> aBigAsteroid = new Asteroid(3, this);
 
         // Possible asteroids coordinates for start are always 50 points away from the borders of the scene
         int margin = 50;
         int astCoordX = scWidth/2 - margin;
         int astCoordY = scHeight/2 - margin;
-        aSmallAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
+        /*aSmallAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
         scene->addItem(aSmallAsteroid);
 
         aMediumAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
-        scene->addItem(aMediumAsteroid);
+        scene->addItem(aMediumAsteroid);*/
 
         aBigAsteroid->setPos(randInt(-astCoordX,astCoordX), randInt(-astCoordY,astCoordY));
         scene->addItem(aBigAsteroid);
@@ -395,7 +395,7 @@ void MainWindow::saveCurGame(int saveGameSlotID){
                 xmlGames[i].SSavename = savename;
                 xmlGames[i].SScore = score;
                 xmlGames[i].SLives = lives;
-                xmlGames[i].SLevel = ++level; // Add 1 to current level so the game will start from next level as the current one is finished!
+                xmlGames[i].SLevel = level + 1; // Add 1 to current level so the game will start from next level as the current one is finished!
             }
         }
         // Write <save id= ? >
@@ -758,7 +758,11 @@ bool MainWindow::checkForTopScore()
 
     // Try to open the file for reading
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-             return false;
+<<<<<<< HEAD
+              file.open(QIODevice::ReadOnly | QIODevice::Text);
+=======
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+>>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
 
     // Reading the file:
     // Either read until end or read until 10 rows
@@ -816,8 +820,7 @@ void MainWindow::updateTopScores()
 
         // Try to open the file
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-                 return;
-
+            return;
 
         // Read whole file
         QString allFile = file.readAll();
@@ -841,10 +844,22 @@ void MainWindow::updateTopScores()
             if (!file.open(QIODevice::Append | QIODevice::Text))
                      return;
 
-
             QTextStream outStream(&file);
+<<<<<<< HEAD
+            if(splitLine.isEmpty())
+            {
+                outStream << line;
+            }
+            else
+            {
+                // Append the line
+                outStream << "\n" << line;
+            }
+
+=======
             // Append the line
-            outStream << "\n" << line;
+            outStream << line << "\n";
+>>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
 
             // Close the file
             file.close();

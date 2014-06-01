@@ -1,16 +1,6 @@
 #include "saucer.h"
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
-static double TwoPi = 2.0 * Pi;
-
- static qreal normalizeAngle(qreal angle)
- {
-     while (angle < 0)
-         angle += TwoPi;
-     while (angle > TwoPi)
-         angle -= TwoPi;
-     return angle;
- }
 
 /* Constructor
  * @param size : 1 - small, 2 - large
@@ -78,34 +68,7 @@ void Saucer::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 void Saucer::advance(int step){
     if (!step) return;
-/*
-    // Try not to crash with any other objects
-    qreal angle = 0;
-    QList<QGraphicsItem *> dangerItems = scene()->items(QPolygonF()
-                                                            << mapToScene(0, 0)
-                                                            << mapToScene(-30 * size, -50 * size)
-                                                            << mapToScene(30 * size, -50 * size));
-    foreach (QGraphicsItem *item, dangerItems) {
-        if (item == this) continue;
 
-        QLineF lineToItem(QPointF(0, 0), mapFromItem(item, 0, 0));
-        qreal angleToItem = ::acos(lineToItem.dx() / lineToItem.length());
-
-        if (lineToItem.dy() < 0) { angleToItem = TwoPi - angleToItem; }
-
-        angleToItem = normalizeAngle((Pi - angleToItem) + Pi / 2);
-
-        if (angleToItem >= 0 && angleToItem < Pi / 2) {
-            // Rotate right
-            angle += 10;
-        } else if (angleToItem <= TwoPi && angleToItem > (TwoPi - Pi / 2)) {
-            // Rotate left
-            angle -= 10;
-        }
-    }
-
-    setRotation(rotation() + angle);
-*/
     // Move the saucer
     this->setPos(mapToParent(0, speed));
     int thisX = x();
