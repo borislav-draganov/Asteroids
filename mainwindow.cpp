@@ -758,20 +758,13 @@ bool MainWindow::checkForTopScore()
 
     // Try to open the file for reading
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-<<<<<<< HEAD
-<<<<<<< HEAD
               file.open(QIODevice::ReadOnly | QIODevice::Text);
-=======
-        file.open(QIODevice::ReadWrite | QIODevice::Text);
->>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
-=======
-        file.open(QIODevice::ReadWrite | QIODevice::Text);
->>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
 
     // Reading the file:
     // Either read until end or read until 10 rows
     int counter = 0;
-    while (!file.atEnd() and counter < maxTopScores) {
+    while (!file.atEnd() and counter < maxTopScores)
+    {
         // Read line
         QString line = file.readLine();
 
@@ -849,7 +842,6 @@ void MainWindow::updateTopScores()
                      return;
 
             QTextStream outStream(&file);
-<<<<<<< HEAD
             if(splitLine.isEmpty())
             {
                 outStream << line;
@@ -859,15 +851,6 @@ void MainWindow::updateTopScores()
                 // Append the line
                 outStream << "\n" << line;
             }
-
-=======
-            // Append the line
-            outStream << line << "\n";
-<<<<<<< HEAD
->>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
-=======
->>>>>>> 264eb07371762c5eca285c12daac5a9f9699cdf4
-
             // Close the file
             file.close();
         }
