@@ -44,7 +44,7 @@ private:
 signals:
      void saucerKilled(int size);   // Tell the main window a saucer's been killed by the player
      void explosionSound();         // Tell the main window to play the explosion sound effect
-     void updateObjectCountOnKill(int upd); // Tell the main window to update the object count that is used for level change
+     void updateObjectCount(int upd); // Tell the main window to update the object count that is used for level change
 
 private slots:
      void fireMissile();            // Fire a new missile

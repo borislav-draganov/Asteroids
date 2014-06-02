@@ -23,7 +23,7 @@ Ship::Ship(QObject *parent) : QObject(parent) {
     keyUP = false;
 
     // Set angle
-    angle = 10;
+    angle = 7;
 
     // Set speed
     speed = -5;

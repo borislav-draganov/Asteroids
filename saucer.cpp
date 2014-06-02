@@ -36,10 +36,10 @@ Saucer::Saucer(int size, QObject *parent) : QObject(parent)
     connect(this, SIGNAL(saucerKilled(int)), parent, SLOT(updateScore(int)));
 
     // Connect to the slot that updates the object counter
-    connect(this, SIGNAL(updateObjectCountOnKill(int)), parent, SLOT(updateObjectCounter(int)));
+    connect(this, SIGNAL(updateObjectCount(int)), parent, SLOT(updateObjectCounter(int)));
 
     // Update the object counter: +1 as we spawn the saucer
-    emit updateObjectCountOnKill(1);
+    emit updateObjectCount(1);
 
     // Nullify the pointer for the explosion .gif
     gif_anim = 0;
@@ -106,7 +106,7 @@ void Saucer::advance(int step){
 void Saucer::destoyItem()
 {
     // Update the object counter: -1 as we will remove the saucer
-    emit updateObjectCountOnKill(-1);
+    emit updateObjectCount(-1);
 
     // Stop firing
     fireTimer->stop();

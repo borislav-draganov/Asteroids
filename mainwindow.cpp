@@ -758,7 +758,7 @@ bool MainWindow::checkForTopScore()
 
     // Try to open the file for reading
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-              file.open(QIODevice::ReadOnly | QIODevice::Text);
+              file.open(QIODevice::ReadWrite | QIODevice::Text);
 
     // Reading the file:
     // Either read until end or read until 10 rows
@@ -842,15 +842,10 @@ void MainWindow::updateTopScores()
                      return;
 
             QTextStream outStream(&file);
-            if(splitLine.isEmpty())
-            {
-                outStream << line;
-            }
-            else
-            {
-                // Append the line
-                outStream << "\n" << line;
-            }
+
+            // Append the line
+            outStream << line << "\n";
+
             // Close the file
             file.close();
         }
