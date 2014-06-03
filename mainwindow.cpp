@@ -819,19 +819,92 @@ void MainWindow::updateTopScores()
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
             return;
 
+
+
         // Read whole file
         QString allFile = file.readAll();
 
         // Close file
         file.close();
 
-        // Setting delimiter - will be new line
-        QString delimiterPatternNewLine("\n");
+        // Check if file is empty
+        if(allFile.isEmpty())
+        {
+            // Re-write the file
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+                     return;
+            QTextStream outStream(&file);
+            QString line = topScoreName + " " + QString::number(score) + "\n";
+            outStream << line;
+            file.close();
+        }
+        else // File is not empty
+        {
+            // Setting delimiter - will be new line
+            QString delimiterPatternNewLine("\n");
 
-        // Splitting the file
-        QStringList splitLine = allFile.split(delimiterPatternNewLine);
+            // Splitting the file
+            QStringList splitLine = allFile.split(delimiterPatternNewLine);
+            int temp = splitLine.size();
+            for(int i = 0; i < temp; i++)
+            {
+
+                if(!splitLine[i].isEmpty())
+                {
+                    // We have to split the lines to check the top score
+                    QString delimiterPattern(" ");
+                    QStringList lineContent = splitLine[i].split(delimiterPattern);
+
+                    // Check if line top score is below the current score
+                    // If not - let the loop continue
+                    if(lineContent[1].toInt() < score)
+                    {
+                        QString line = topScoreName + " " + QString::number(score);
+                        splitLine.insert(i,line);
+                        break;
+                    }
+
+                    // Check if we are at the end of the loop
+                    if(i == temp - 1)
+                    {
+                        QString line = topScoreName + " " + QString::number(score);
+                        splitLine.insert(i,line);
+                    }
+                }
+
+            }
+
+            // Re-write the file
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+                     return;
+            QTextStream outStream(&file);
+            for(int i = 0; i < splitLine.size(); i++)
+            {
+                QString outline;
+                if(i == maxTopScores - 1)
+                {
+                    outline = splitLine[i];
+                    break;
+                }
+                else if( i == 0)
+                {
+                    outline = splitLine[i];
+                }
+                else
+                {
+                    outline = "\n"+splitLine[i];
+                }
+
+                outStream << outline;
+            }
+
+            file.close();
+        }
+
+
 
         // Check if we want to replace line or append (this is in case we still have empty top score slots)
+        /*
         if(splitLine.size() < maxTopScores)
         {
             QString line = topScoreName + " " + QString::number(score);
@@ -888,6 +961,7 @@ void MainWindow::updateTopScores()
             file.close();
 
         }
+        */
     }
 }
 
