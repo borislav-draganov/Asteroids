@@ -806,6 +806,7 @@ void MainWindow::updateTopScores()
     QString topScoreName = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                                       tr("Name:"), QLineEdit::Normal,
                                                       QDir::home().dirName(), &ok);
+    topScoreName.replace(" ","");
 
     if(ok)
     {
@@ -898,67 +899,6 @@ void MainWindow::updateTopScores()
             file.close();
         }
 
-
-
-        // Check if we want to replace line or append (this is in case we still have empty top score slots)
-        /*
-        if(splitLine.size() < maxTopScores)
-        {
-            QString line = topScoreName + " " + QString::number(score);
-
-            // Open file for append
-
-            if (!file.open(QIODevice::Append | QIODevice::Text))
-                     return;
-
-            QTextStream outStream(&file);
-
-            // Append the line
-            outStream << line << "\n";
-
-            // Close the file
-            file.close();
-        }
-        // Else we run trough the list and find the line we want to replace
-        else{
-            for(int i = 0; i < maxTopScores; i++)
-            {
-                // We have to split the lines to check the top score
-                QString delimiterPattern(" ");
-                QStringList lineContent = splitLine[i].split(delimiterPattern);
-
-                // Check if line top score is below the current score
-                // If not - let the loop continue
-                if(lineContent[1].toInt() < score)
-                {
-                    QString line = topScoreName + " " + QString::number(score);
-                    splitLine.insert(i,line);
-                    break;
-                }
-            }
-
-            // Re-write the file
-            if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-                     return;
-            QTextStream outStream(&file);
-            for(int i = 0; i < maxTopScores; i++)
-            {
-                QString outline;
-                if(i == maxTopScores - 1)
-                {
-                    outline = splitLine[i];
-                }
-                else
-                {
-                    outline = splitLine[i]+"\n";
-                }
-                outStream << outline;
-            }
-
-            file.close();
-
-        }
-        */
     }
 }
 
