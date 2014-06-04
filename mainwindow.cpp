@@ -819,8 +819,6 @@ void MainWindow::updateTopScores()
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
             return;
 
-
-
         // Read whole file
         QString allFile = file.readAll();
 
@@ -863,12 +861,10 @@ void MainWindow::updateTopScores()
                         splitLine.insert(i,line);
                         break;
                     }
-
-                    // Check if we are at the end of the loop
-                    if(i == temp - 1)
+                    else if(i == temp - 1)// Check if we are at the end of the loop
                     {
                         QString line = topScoreName + " " + QString::number(score);
-                        splitLine.insert(i,line);
+                        splitLine.insert(i+1,line);
                     }
                 }
 
@@ -883,7 +879,8 @@ void MainWindow::updateTopScores()
                 QString outline;
                 if(i == maxTopScores - 1)
                 {
-                    outline = splitLine[i];
+                    outline = "\n"+splitLine[i];
+                    outStream << outline;
                     break;
                 }
                 else if( i == 0)

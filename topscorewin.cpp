@@ -115,7 +115,7 @@ void topScoreWin::readTopScores()
     }
 
     // We might not nave top scores yet or the list might not be full -> Do a check and set the topScores as empty
-    if(counter < maxTopScores-1)
+    if(counter < maxTopScores)
     {
         for(int i = counter; i < maxTopScores; i++)
         {
