@@ -113,17 +113,21 @@ void Ship::advance(int step) {
     if (flashes < 1) {
         QList<QGraphicsItem *> collidingItems = scene()->collidingItems(this);
         if (!collidingItems.isEmpty()) {
-            QGraphicsItem * item = collidingItems[0];
-            emit shipDestroyed();
-            destroyShip(); // The ship was hit, so it has to be destroyed
-
             // Check if it was a missile
+            QGraphicsItem * item = collidingItems[0];
+
             Missile *aMissile = qgraphicsitem_cast<Missile *>(item);
             if (aMissile != NULL) {
-                // If a missile hit the ship, destroy the missile
+                // Check if the missile was fired from the ship, in which case - ignore it
+                if(aMissile->firedFromShip()) {
+                    return;
+                }
+
                 aMissile->destoyItem();
-                return;
             }
+
+            emit shipDestroyed();
+            destroyShip(); // The ship was hit, so it has to be destroyed
         }
     }
 }
