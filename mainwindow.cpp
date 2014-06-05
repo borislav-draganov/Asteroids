@@ -833,7 +833,7 @@ void MainWindow::updateTopScores()
             if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
                      return;
             QTextStream outStream(&file);
-            QString line = topScoreName + " " + QString::number(score) + "\n";
+            QString line = topScoreName + " " + QString::number(score);
             outStream << line;
             file.close();
         }
