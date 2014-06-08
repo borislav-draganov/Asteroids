@@ -176,11 +176,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Set random background for the scene
-
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    int randBackGround = qrand() % 2 + 1;
+    int randBackGround = qrand() % 4 + 1;
     QPixmap bckGround (QString(":/background/resource/backGround%1.jpg").arg(randBackGround));
-    scene->setBackgroundBrush(bckGround);
+    QBrush bckGroundBrush (bckGround);
+    QTransform translateCoor;
+    int transOffset = 15; // There's a need of a slight offset on the x axis
+    translateCoor.translate(-scWidth/2 - transOffset, -scHeight/2);
+    bckGroundBrush.setTransform(translateCoor);
+    scene->setBackgroundBrush(bckGroundBrush);
 
     // Create QGraphicsView that will be nested as CentralWidget in the MainWindow
 
@@ -225,6 +229,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Call addButtons in order to add the buttons to the window
     addButtons();
 
+    // Set icon
+    setWindowIcon(QIcon(":/icon/resource/icon.ico"));
 }
 
 // Function used to generate random values when required

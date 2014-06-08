@@ -8,6 +8,8 @@
     <qresource prefix="/background">
         <file>resource/backGround1.jpg</file>
         <file>resource/backGround2.jpg</file>
+        <file>resource/backGround3.jpg</file>
+        <file>resource/backGround4.jpg</file>
     </qresource>
     <qresource prefix="/ship">
         <file>resource/Ship.png</file>
@@ -21,7 +23,7 @@
     <qresource prefix="/GameOver">
         <file>resource/GameOver.jpg</file>
     </qresource>
-    <qresource prefix="/saves">
-        <file>resource/saves.xml</file>
+    <qresource prefix="/icon">
+        <file>resource/icon.ico</file>
     </qresource>
 </RCC>
