@@ -1,5 +1,8 @@
 #include "ship.h"
 
+/* Constructor
+ * @param parent : the parent in the Qt hierarchy
+ */
 Ship::Ship(QObject *parent) : QObject(parent) {
     // Flashes count
     flashes = 20;
@@ -45,11 +48,13 @@ Ship::Ship(QObject *parent) : QObject(parent) {
     setFocus();
 }
 
+// Determine the maximum area available for displaying content
 QRectF Ship::boundingRect() const
 {
     return QRect(-(width / 2), -(height / 2), width, height);
 }
 
+// Determine the actual shape of the ship - this is used in collision detection
 QPainterPath Ship::shape() const {
     QPainterPath path;
     QPolygonF ship;
@@ -72,6 +77,7 @@ QPainterPath Ship::shape() const {
     return path;
 }
 
+// Determine the look of the ship
 void Ship::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     //QBrush brush = QBrush(Qt::red);
@@ -132,6 +138,7 @@ void Ship::advance(int step) {
     }
 }
 
+// Destroy the ship
 void Ship::destroyShip() {
     // Use the current coordinates
     double thisX = x();
@@ -161,6 +168,7 @@ void Ship::destroyShip() {
     scene()->removeItem(this);
 }
 
+// Sets the flags for the keys to true if they are pressed or fires a missile
 void Ship::keyPressEvent(QKeyEvent *event) {
     if (event->isAutoRepeat()) { return; }
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) { keyUP = true; }
@@ -169,6 +177,7 @@ void Ship::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Space) { fireMissile(); }
 }
 
+// Sets the flags for the keys to false when the keys are released, also sets the inertia speed
 void Ship::keyReleaseEvent(QKeyEvent *event) {
     if(event->isAutoRepeat()) { return; }
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_W) { keyUP = false; inertia = speed; }
@@ -176,6 +185,7 @@ void Ship::keyReleaseEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Right || event->key() == Qt::Key_D) { keyRight = false; }
 }
 
+// Fire a missile towards the target
 void Ship::fireMissile() {
     Missile *newMissile = new Missile(true, parent());
     int frontOffset = -(height / 2 + newMissile->getLength());
@@ -185,6 +195,7 @@ void Ship::fireMissile() {
     scene()->addItem(newMissile);
 }
 
+// Blinking the ship for 2 seconds, used for the ship invulnerability
 void Ship::flashEvent() {
     if(effectiveOpacity() > 0) {
         setOpacity(0);
