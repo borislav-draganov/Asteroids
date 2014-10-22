@@ -1341,7 +1341,7 @@ QString MainWindow::askUserName() {
     QString topScoreName;
 
     while(!ok) {
-        topScoreName = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+        topScoreName = QInputDialog::getText(this, tr("Enter username"),
                                                           tr("Name:"), QLineEdit::Normal,
                                                           QDir::home().dirName(), &ok);
     }
