@@ -65,6 +65,8 @@ private:
     bool checkForTopScore();
     void updateTopScores();
 
+    QString askUserName();
+
     int score; // Score counter
     int level; // Levels counter
     int lives; // Lives counter
@@ -129,6 +131,8 @@ private:
     QSoundEffect *laserEffect;
 
     QPointer<Ship> theShip;
+
+    QString userName;
 };
 
 #endif // MAINWINDOW_H

@@ -231,6 +231,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Set icon
     setWindowIcon(QIcon(":/icon/resource/icon.ico"));
+
+    // Ask the user for a name
+    userName = askUserName();
 }
 
 // Function used to generate random values when required
@@ -808,103 +811,93 @@ bool MainWindow::checkForTopScore()
 
 void MainWindow::updateTopScores()
 {
-    bool ok;
-    QString topScoreName = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                                      tr("Name:"), QLineEdit::Normal,
-                                                      QDir::home().dirName(), &ok);
-    topScoreName.replace(" ","");
+    // First we will read whole file, split the lines, then find the correct line that we want to replace or append
+    // Second we write the file again
 
-    if(ok)
+    // Set which file we will open
+    QFile file("topscore.txt");
+
+    // Try to open the file
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    // Read whole file
+    QString allFile = file.readAll();
+
+    // Close file
+    file.close();
+
+    // Check if file is empty
+    if(allFile.isEmpty())
     {
-        // First we will read whole file, split the lines, then find the correct line that we want to replace or append
-        // Second we write the file again
-
-        // Set which file we will open
-        QFile file("topscore.txt");
-
-        // Try to open the file
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            return;
-
-        // Read whole file
-        QString allFile = file.readAll();
-
-        // Close file
+        // Re-write the file
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+                 return;
+        QTextStream outStream(&file);
+        QString line = userName + " " + QString::number(score);
+        outStream << line;
         file.close();
+    }
+    else // File is not empty
+    {
+        // Setting delimiter - will be new line
+        QString delimiterPatternNewLine("\n");
 
-        // Check if file is empty
-        if(allFile.isEmpty())
+        // Splitting the file
+        QStringList splitLine = allFile.split(delimiterPatternNewLine);
+        int temp = splitLine.size();
+        for(int i = 0; i < temp; i++)
         {
-            // Re-write the file
-            if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-                     return;
-            QTextStream outStream(&file);
-            QString line = topScoreName + " " + QString::number(score);
-            outStream << line;
-            file.close();
-        }
-        else // File is not empty
-        {
-            // Setting delimiter - will be new line
-            QString delimiterPatternNewLine("\n");
 
-            // Splitting the file
-            QStringList splitLine = allFile.split(delimiterPatternNewLine);
-            int temp = splitLine.size();
-            for(int i = 0; i < temp; i++)
+            if(!splitLine[i].isEmpty())
             {
+                // We have to split the lines to check the top score
+                QString delimiterPattern(" ");
+                QStringList lineContent = splitLine[i].split(delimiterPattern);
 
-                if(!splitLine[i].isEmpty())
+                // Check if line top score is below the current score
+                // If not - let the loop continue
+                if(lineContent[1].toInt() < score)
                 {
-                    // We have to split the lines to check the top score
-                    QString delimiterPattern(" ");
-                    QStringList lineContent = splitLine[i].split(delimiterPattern);
-
-                    // Check if line top score is below the current score
-                    // If not - let the loop continue
-                    if(lineContent[1].toInt() < score)
-                    {
-                        QString line = topScoreName + " " + QString::number(score);
-                        splitLine.insert(i,line);
-                        break;
-                    }
-                    else if(i == temp - 1)// Check if we are at the end of the loop
-                    {
-                        QString line = topScoreName + " " + QString::number(score);
-                        splitLine.insert(i+1,line);
-                    }
-                }
-
-            }
-
-            // Re-write the file
-            if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-                     return;
-            QTextStream outStream(&file);
-            for(int i = 0; i < splitLine.size(); i++)
-            {
-                QString outline;
-                if(i == maxTopScores - 1)
-                {
-                    outline = "\n"+splitLine[i];
-                    outStream << outline;
+                    QString line = userName + " " + QString::number(score);
+                    splitLine.insert(i,line);
                     break;
                 }
-                else if( i == 0)
+                else if(i == temp - 1)// Check if we are at the end of the loop
                 {
-                    outline = splitLine[i];
+                    QString line = userName + " " + QString::number(score);
+                    splitLine.insert(i+1,line);
                 }
-                else
-                {
-                    outline = "\n"+splitLine[i];
-                }
-
-                outStream << outline;
             }
 
-            file.close();
         }
 
+        // Re-write the file
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+                 return;
+        QTextStream outStream(&file);
+        for(int i = 0; i < splitLine.size(); i++)
+        {
+            QString outline;
+            if(i == maxTopScores - 1)
+            {
+                outline = "\n"+splitLine[i];
+                outStream << outline;
+                break;
+            }
+            else if( i == 0)
+            {
+                outline = splitLine[i];
+            }
+            else
+            {
+                outline = "\n"+splitLine[i];
+            }
+
+            outStream << outline;
+        }
+
+        file.close();
     }
 }
 
@@ -1057,8 +1050,6 @@ void MainWindow::setBtnVisibility(int temp)
 // Adding buttons to the window. All are set to hidden.
 void MainWindow::addButtons()
 {
-
-
     // Standard buttons
 
     // Highest placed standard button will be above the middle of the window
@@ -1342,6 +1333,22 @@ void MainWindow::pshdButton()
         topScore->show();
     }
 
+}
+
+// Ask the user for his/her name via an Input Dialog
+QString MainWindow::askUserName() {
+    bool ok = false;
+    QString topScoreName;
+
+    while(!ok) {
+        topScoreName = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                                          tr("Name:"), QLineEdit::Normal,
+                                                          QDir::home().dirName(), &ok);
+    }
+
+    topScoreName.replace(" ","");
+
+    return topScoreName;
 }
 
 // Send the ship's coordinates - (0,0) if the ship is currently destroyed
