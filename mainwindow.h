@@ -65,6 +65,8 @@ private:
     bool checkForTopScore();
     void updateTopScores();
 
+    void setRandomBackground();
+
     QString askUserName();
 
     int score; // Score counter

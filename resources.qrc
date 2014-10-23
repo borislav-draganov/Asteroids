@@ -10,6 +10,10 @@
         <file>resource/backGround2.jpg</file>
         <file>resource/backGround3.jpg</file>
         <file>resource/backGround4.jpg</file>
+        <file>resource/backGround5.jpg</file>
+        <file>resource/backGround6.jpg</file>
+        <file>resource/backGround7.jpg</file>
+        <file>resource/backGround8.jpg</file>
     </qresource>
     <qresource prefix="/ship">
         <file>resource/Ship.png</file>

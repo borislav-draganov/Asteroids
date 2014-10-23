@@ -176,15 +176,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Set random background for the scene
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    int randBackGround = qrand() % 4 + 1;
-    QPixmap bckGround (QString(":/background/resource/backGround%1.jpg").arg(randBackGround));
-    QBrush bckGroundBrush (bckGround);
-    QTransform translateCoor;
-    int transOffset = 15; // There's a need of a slight offset on the x axis
-    translateCoor.translate(-scWidth/2 - transOffset, -scHeight/2);
-    bckGroundBrush.setTransform(translateCoor);
-    scene->setBackgroundBrush(bckGroundBrush);
+    setRandomBackground();
 
     // Create QGraphicsView that will be nested as CentralWidget in the MainWindow
 
@@ -256,6 +248,9 @@ void MainWindow::addShip()
 // Adds the asteroids and saucers, call the addShip to add new ship
 void MainWindow::newLevel()
 {
+    // Set random background for the scene
+    setRandomBackground();
+
     // Remove the old Ship if any
     if(theShip) { scene->removeItem(theShip); theShip->deleteLater(); }
 
@@ -1333,6 +1328,19 @@ void MainWindow::pshdButton()
         topScore->show();
     }
 
+}
+
+// Set random background for the scene
+void MainWindow::setRandomBackground() {
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+    int randBackGround = qrand() % 8 + 1;
+    QPixmap bckGround (QString(":/background/resource/backGround%1.jpg").arg(randBackGround));
+    QBrush bckGroundBrush (bckGround);
+    QTransform translateCoor;
+    int transOffset = 15; // There's a need of a slight offset on the x axis
+    translateCoor.translate(-scWidth/2 - transOffset, -scHeight/2);
+    bckGroundBrush.setTransform(translateCoor);
+    scene->setBackgroundBrush(bckGroundBrush);
 }
 
 // Ask the user for his/her name via an Input Dialog
