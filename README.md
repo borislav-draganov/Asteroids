@@ -1,5 +1,7 @@
-NETB380
-=======
+# Asteroids #
+A group project for the NETB380 course at New Bulgarian University.
+
+## The Task ##
 Using the programming language C++ and programming framework Qt write an arcade video game Asteroids.
 The program simulates the famous game from 1979 (see http://en.wikipedia.org/wiki/Asteroids_%28video_game%29).
 The program interface is fully graphical.
@@ -10,3 +12,8 @@ The program must have the following features:
 * The program records the best scores;
 * Once a level is passed by the user, he/she can play the next level;
 * The user can save a game and load previously saved games.
+
+## Participants ##
+* [Borislav Draganov](https://github.com/borislav-draganov)
+* [Martin Dimitrov](https://github.com/mrshadow)
+* [Viktor Butanski](https://github.com/Blacktron)
