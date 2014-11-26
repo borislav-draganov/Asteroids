@@ -1,8 +1,8 @@
 The MIT License (MIT)
 
-Copyright (c) 2013 Borislav Draganov
-			  2013 Martin Dimitrov
-			  2013 Viktor Butanski
+Copyright (c) 2014 Borislav Draganov
+			  2014 Martin Dimitrov
+			  2014 Viktor Butanski
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
